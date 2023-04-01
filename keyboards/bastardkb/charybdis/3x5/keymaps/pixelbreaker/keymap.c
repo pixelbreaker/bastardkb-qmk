@@ -76,6 +76,7 @@ int8_t sign(int x) {
 #define WH_U KC_MS_WH_UP
 
 #define DEL_LINE MEH(KC_DEL)
+#define SNIPE SNIPING_MODE
 
 // combos
 #define COMBO_COUNT 7
@@ -196,16 +197,16 @@ bool get_combo_must_hold(uint16_t index, combo_t *combo) {
 // Mouse.
 #define LAYOUT_LAYER_MOUSE                                                                       \
     _______, _______, _______, _______, _______,    _______, _______, _______, _______, _______, \
-    _______, _______, KC_BTN2, KC_BTN1, KC_BTN3,    _______, _______, _______, _______, _______, \
+    SNIPE,   KC_BTN3, KC_BTN2, KC_BTN1, _______,    _______, _______, _______, _______, _______, \
     _______, _______, _______, _______, _______,    _______, _______, _______, _______, _______, \
                       _______, _______, _______,    _______, _______
 
 // Adjust.
 #define LAYOUT_LAYER_ADJUST                                                                      \
-    S_D_MOD, USR_PST, USR_CPY, USR_CUT, USR_UND,    _________________COPY_PASTA________________, \
-    DPI_MOD, DRGSCRL, KC_LCTL, KC_LSFT, _______,    U_NU,    MS_L,    MS_D,    MS_U,    MS_R,    \
-    _________________COPY_PASTA________________,    U_NU,    WH_L,    WH_D,    WH_U,    WH_R,    \
-                      KC_BTN2, KC_BTN1, KC_BTN3,    KC_BTN1, KC_BTN2
+    S_D_MOD, _______, _______, _______, _______,    _______, _______, _______, _______, _______, \
+    DPI_MOD, _______, _______, _______, _______,    _______, _______, _______, _______, _______, \
+    _______, _______, _______, _______, _______,    _______, _______, _______, _______, _______, \
+                      _______, _______, _______,    _______, _______
 
 
 // Layer wrappers

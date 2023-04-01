@@ -97,6 +97,7 @@
 // only required if not setting mouse layer elsewhere
 #    define AUTO_MOUSE_DEFAULT_LAYER 3
 #    define AUTO_MOUSE_DEBOUNCE 100
+#    define AUTO_MOUSE_DELAY 1200
 
 /* Trackball angle adjustment. */
 #    ifdef ROTATIONAL_TRANSFORM_ANGLE
