@@ -75,6 +75,8 @@ int8_t sign(int x) {
 #define WH_D KC_MS_WH_DOWN
 #define WH_U KC_MS_WH_UP
 
+#define DEL_LINE MEH(KC_DEL)
+
 // combos
 #define COMBO_COUNT 7
 const uint16_t PROGMEM combo_hypr[]      = {SPC_NAV, TAB_CODE, COMBO_END};
@@ -147,10 +149,8 @@ bool get_combo_must_hold(uint16_t index, combo_t *combo) {
 /** Convenience row shorthands. */
 #define __________________RESET_L__________________    QK_BOOT, U_NA,    U_NA,    U_NA,    U_NA
 #define __________________RESET_R__________________    U_NA,    U_NA,    U_NA,    U_NA,    QK_BOOT
-#define ______________HOME_ROW_GASC_L______________    KC_LGUI, KC_LALT, KC_LCTL, KC_LSFT, U_NA
-#define ______________HOME_ROW_ALGR_L______________    U_NA,    KC_ALGR, U_NA,    U_NA,    U_NA
-#define ______________HOME_ROW_GASC_R______________    U_NA,    KC_LSFT, KC_LCTL, KC_LALT, KC_LGUI
-#define ______________HOME_ROW_ALGR_R______________    U_NA,    U_NA,    U_NA,    KC_ALGR, U_NA
+#define ______________HOME_ROW_GASC_L______________    KC_LCTL, KC_LALT, KC_LGUI, KC_LSFT, U_NA
+#define ______________HOME_ROW_GASC_R______________    U_NA,    KC_LSFT, KC_LGUI, KC_LALT, KC_LCTL
 #define _________________COPY_PASTA________________    USR_UND, USR_CUT, USR_CPY, USR_PST, USR_RDO
 
 
@@ -167,19 +167,38 @@ bool get_combo_must_hold(uint16_t index, combo_t *combo) {
 
 // Navigation.
 #define LAYOUT_LAYER_NAV                                                                         \
-    __________________RESET_L__________________,    _________________COPY_PASTA________________, \
+    __________________RESET_L__________________,    DEL_LINE, _______, _______, _______, _______,\
     ______________HOME_ROW_GASC_L______________,    CW_TOGG, KC_LEFT, KC_DOWN,   KC_UP, KC_RGHT, \
     _________________COPY_PASTA________________,    KC_INS, KC_HOME, KC_PGDN, KC_PGUP,  KC_END,  \
                          U_NA,    U_NA,    U_NA,    KC_BSPC, KC_ENT
 
+// Code.
+#define LAYOUT_LAYER_CODE                                                                        \
+    __________________RESET_L__________________,    KC_EXLM, KC_LBRC, KC_RBRC, KC_DLR,  KC_PERC, \
+    ______________HOME_ROW_GASC_L______________,    KC_PIPE, KC_LCBR, KC_RCBR, KC_EQL,  KC_SCLN, \
+    _________________COPY_PASTA________________,    KC_AMPR, S(KC_9), S(KC_0), S(KC_EQL),KC_BSLS,\
+                      U_NA,    U_NA,    U_NA,       KC_DEL, A(KC_3)
 
+// Numerals.
+#define LAYOUT_LAYER_NUM                                                                         \
+    KC_LBRC,    KC_7,    KC_8,    KC_9,  KC_EQL,    __________________RESET_R__________________, \
+    KC_COLN,    KC_4,    KC_5,    KC_6, KC_MINS,    ______________HOME_ROW_GASC_R______________, \
+     KC_GRV,    KC_1,    KC_2,    KC_3, KC_UNDS,    _________________COPY_PASTA________________, \
+                       KC_DOT,    KC_0, KC_MINS,    U_NA,    U_NA
+
+
+// Function keys.
+#define LAYOUT_LAYER_FUN                                                                         \
+     KC_F12,   KC_F7,   KC_F8,   KC_F9, KC_PSCR,    __________________RESET_R__________________, \
+     KC_F11,   KC_F4,   KC_F5,   KC_F6, KC_SCRL,    ______________HOME_ROW_GASC_R______________, \
+     KC_F10,   KC_F1,   KC_F2,   KC_F3, KC_PAUS,    _________________COPY_PASTA________________, \
+                       KC_APP,  KC_SPC,  KC_TAB,    U_NA,    U_NA
 // Mouse.
 #define LAYOUT_LAYER_MOUSE                                                                       \
     _______, _______, _______, _______, _______,    _______, _______, _______, _______, _______, \
     _______, _______, KC_BTN2, KC_BTN1, KC_BTN3,    _______, _______, _______, _______, _______, \
     _______, _______, _______, _______, _______,    _______, _______, _______, _______, _______, \
                       _______, _______, _______,    _______, _______
-
 
 // Adjust.
 #define LAYOUT_LAYER_ADJUST                                                                      \
@@ -189,29 +208,6 @@ bool get_combo_must_hold(uint16_t index, combo_t *combo) {
                       KC_BTN2, KC_BTN1, KC_BTN3,    KC_BTN1, KC_BTN2
 
 
-// Code.
-#define LAYOUT_LAYER_CODE                                                                        \
-    __________________RESET_L__________________,    KC_EXLM, KC_LBRC, KC_RBRC, KC_DLR,  KC_PERC, \
-    ______________HOME_ROW_GASC_L______________,    KC_PIPE, KC_LCBR, KC_RCBR, KC_EQL,  KC_SCLN, \
-    _________________COPY_PASTA________________,    KC_AMPR, S(KC_9), S(KC_0), S(KC_EQL),KC_BSLS,\
-                      U_NA,    U_NA,    U_NA,       KC_DEL, A(KC_3)
-
-
-// Numerals.
-#define LAYOUT_LAYER_NUM                                                                      \
-    KC_LBRC,    KC_7,    KC_8,    KC_9,  KC_EQL,    __________________RESET_R__________________, \
-    KC_COLN,    KC_4,    KC_5,    KC_6, KC_MINS,    ______________HOME_ROW_GASC_R______________, \
-     KC_GRV,    KC_1,    KC_2,    KC_3, KC_UNDS,    ______________HOME_ROW_ALGR_R______________, \
-                       KC_DOT,    KC_0, KC_MINS,    U_NA,    U_NA
-
-
-// Function keys.
-#define LAYOUT_LAYER_FUN                                                                      \
-     KC_F12,   KC_F7,   KC_F8,   KC_F9, KC_PSCR,    __________________RESET_R__________________, \
-     KC_F11,   KC_F4,   KC_F5,   KC_F6, KC_SCRL,    ______________HOME_ROW_GASC_R______________, \
-     KC_F10,   KC_F1,   KC_F2,   KC_F3, KC_PAUS,    ______________HOME_ROW_ALGR_R______________,\
-                       KC_APP,  KC_SPC,  KC_TAB,    U_NA,    U_NA
-
 // Layer wrappers
 #define _HOME_ROW_MOD_GASC(                                            \
     L00, L01, L02, L03, L04, R05, R06, R07, R08, R09,                  \
@@ -219,8 +215,8 @@ bool get_combo_must_hold(uint16_t index, combo_t *combo) {
     ...)                                                               \
              L00,         L01,         L02,         L03,         L04,  \
              R05,         R06,         R07,         R08,         R09,  \
-      LGUI_T(L10), LALT_T(L11), LCTL_T(L12), LSFT_T(L13),        L14,  \
-             R15,  RSFT_T(R16), RCTL_T(R17), LALT_T(R18), RGUI_T(R19), \
+      LCTL_T(L10), LALT_T(L11), LGUI_T(L12), LSFT_T(L13),        L14,  \
+             R15,  RSFT_T(R16), RGUI_T(R17), LALT_T(R18), RCTL_T(R19), \
       __VA_ARGS__
 #define HOME_ROW_MOD_GASC(...) _HOME_ROW_MOD_GASC(__VA_ARGS__)
 
@@ -271,10 +267,10 @@ uint8_t track_mode = 0;
 #define carret_mode 1
 #define media_mode 2
 
-int16_t cum_x            = 0;
-int16_t cum_y            = 0;
-int16_t tap_factor       = 100;
-int16_t winswitch_factor = 250;
+int16_t cum_x         = 0;
+int16_t cum_y         = 0;
+int16_t tap_factor    = 100;
+int16_t switch_factor = 250;
 
 void tap_code_fast(uint8_t code) {
     register_code(code);
@@ -315,20 +311,20 @@ void tap_tb(uint8_t keycode0, uint8_t keycode1, uint8_t keycode2, uint8_t keycod
     }
 }
 
-void tap_winswitch(void) {
-    if (abs(cum_x) + abs(cum_y) >= winswitch_factor) {
+void tap_switcher(void) {
+    if (abs(cum_x) + abs(cum_y) >= switch_factor) {
         if (cum_x > 0) {
-            for (int8_t i = 0; i <= (abs(cum_x) + abs(cum_y)) / winswitch_factor; i++) {
+            for (int8_t i = 0; i <= (abs(cum_x) + abs(cum_y)) / switch_factor; i++) {
                 tap_code_fast(KC_TAB);
-                cum_x = max(cum_x - winswitch_factor, 0);
+                cum_x = max(cum_x - switch_factor, 0);
             }
             cum_y = 0;
         } else {
-            for (int8_t i = 0; i <= (abs(cum_x) + abs(cum_y)) / winswitch_factor; i++) {
+            for (int8_t i = 0; i <= (abs(cum_x) + abs(cum_y)) / switch_factor; i++) {
                 register_code(KC_LSFT);
                 tap_code_fast(KC_TAB);
                 unregister_code(KC_LSFT);
-                cum_x = min(cum_x + winswitch_factor, 0);
+                cum_x = min(cum_x + switch_factor, 0);
             }
             cum_y = 0;
         }
@@ -367,7 +363,7 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
     } else if (track_mode == carret_mode) {
         tap_tb(KC_RIGHT, KC_LEFT, KC_UP, KC_DOWN);
     } else if (winswitch_active || tabswitch_active) {
-        tap_winswitch();
+        tap_switcher();
     }
     return mouse_report;
 }
