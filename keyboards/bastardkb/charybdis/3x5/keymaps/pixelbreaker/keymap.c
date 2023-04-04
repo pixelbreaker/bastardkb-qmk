@@ -24,9 +24,9 @@
 
 #include QMK_KEYBOARD_H
 
-enum custom_layers { LAYER_BASE = 0, LAYER_MEDIA, LAYER_NAV, LAYER_MOUSE, LAYER_CODE, LAYER_NUM, LAYER_FUN, LAYER_ADJUST };
+enum custom_layers { _BASE = 0, _MEDIA, _NAV, _MOUSE, _CODE, _NUM, _FUN, _ADJUST };
 enum custom_keycodes {
-    WINSWITCH = SAFE_RANGE,
+    WINSWITCH = QK_USER,
     TABSWITCH,
     MACSLEEP,
 };
@@ -43,20 +43,20 @@ int8_t sign(int x) {
 }
 
 // Automatically enable sniping when the mouse layer is on.
-// #define CHARYDIS_AUTO_SNIPING_ON_LAYER LAYER_NAV
+// #define CHARYDIS_AUTO_SNIPING_ON_LAYER _NAV
 #ifdef CHARYBDIS_DRAGSCROLL_DPI
 #    undef CHARYBDIS_DRAGSCROLL_DPI
 #endif
 #define CHARYBDIS_DRAGSCROLL_DPI 50
 
-#define ESC_MED LT(LAYER_MEDIA, KC_ESC)
-#define SPC_NAV LT(LAYER_NAV, KC_SPC)
-#define TAB_CODE LT(LAYER_CODE, KC_TAB)
-#define BSP_NUM LT(LAYER_NUM, KC_BSPC)
-#define ENT_FUN LT(LAYER_FUN, KC_ENT)
+#define ESC_MED LT(_MEDIA, KC_ESC)
+#define SPC_NAV LT(_NAV, KC_SPC)
+#define TAB_CODE LT(_CODE, KC_TAB)
+#define BSP_NUM LT(_NUM, KC_BSPC)
+#define ENT_FUN LT(_FUN, KC_ENT)
 
-#define MOUSE(KC) LT(LAYER_MOUSE, KC)
-#define ADJUST(KC) LT(LAYER_ADJUST, KC)
+#define MOUSE(KC) LT(_MOUSE, KC)
+#define ADJUST(KC) LT(_ADJUST, KC)
 
 #define USR_RDO G(S(KC_Z))
 #define USR_PST G(KC_V)
@@ -79,13 +79,14 @@ int8_t sign(int x) {
 #define SNIPE SNIPING_MODE
 
 // combos
-#define COMBO_COUNT 7
+#define COMBO_COUNT 8
 const uint16_t PROGMEM combo_hypr[]      = {SPC_NAV, TAB_CODE, COMBO_END};
 const uint16_t PROGMEM combo_meh[]       = {SPC_NAV, ESC_MED, COMBO_END};
 const uint16_t PROGMEM combo_winswitch[] = {KC_C, KC_V, COMBO_END};
 const uint16_t PROGMEM combo_tabswitch[] = {KC_E, KC_R, COMBO_END};
 const uint16_t PROGMEM combo_at[]        = {KC_COMMA, KC_DOT, COMBO_END};
-const uint16_t PROGMEM combo_backtick[]  = {KC_O, KC_P, COMBO_END};
+const uint16_t PROGMEM combo_tilde[]     = {KC_O, KC_P, COMBO_END};
+const uint16_t PROGMEM combo_backtick[]  = {LALT_T(KC_L), RCTL_T(KC_QUOT), COMBO_END};
 const uint16_t PROGMEM combo_capsword[]  = {LSFT_T(KC_F), RSFT_T(KC_J), COMBO_END};
 
 // clang-format off
@@ -96,6 +97,7 @@ enum combos {
     COMBO_TABSWITCH,
     COMBO_AT,
     COMBO_BACKTICK,
+    COMBO_TILDE,
     COMBO_CAPSWORD,
     COMBO_LENGTH
 };
@@ -107,6 +109,7 @@ combo_t key_combos[COMBO_COUNT] = {
     [COMBO_WINSWITCH] = COMBO(combo_winswitch, WINSWITCH),
     [COMBO_TABSWITCH] = COMBO(combo_tabswitch, TABSWITCH),
     [COMBO_AT]        = COMBO(combo_at, S(KC_2)),
+    [COMBO_TILDE]     = COMBO(combo_tilde, S(KC_GRV)),
     [COMBO_BACKTICK]  = COMBO(combo_backtick, KC_GRV),
     [COMBO_CAPSWORD]  = COMBO(combo_capsword, CW_TOGG),
 };
@@ -137,7 +140,7 @@ bool get_combo_must_hold(uint16_t index, combo_t *combo) {
 #define KC_LAYOUT_wrapper(...) _KC_LAYOUT_wrapper(__VA_ARGS__)
 
 /** Base layer with BÉPO layout. */
-#define LAYOUT_LAYER_BASE_QWERTY KC_LAYOUT_wrapper(               \
+#define LAYOUT_BASE_QWERTY KC_LAYOUT_wrapper(               \
        Q,    W,    E,    R,    T,    Y,    U,    I,    O,    P, \
        A,    S,    D,    F,    G,    H,    J,    K,    L,    QUOT, \
        Z,    X,    C,    V,    B,    N,    M,    COMM, DOT,  SLSH, \
@@ -160,28 +163,28 @@ bool get_combo_must_hold(uint16_t index, combo_t *combo) {
 //////////////
 
 // Navigation.
-#define LAYOUT_LAYER_MEDIA                                                                       \
+#define LAYOUT_MEDIA                                                                             \
     __________________RESET_L__________________,    U_NU,    U_NU,    U_NU,    U_NU,    MACSLEEP,\
     ______________HOME_ROW_GASC_L______________,    KC_CAPS, KC_MPRV, KC_VOLD, KC_VOLU, KC_MNXT, \
     _______, _______, _______, VOL_SML, _______,    U_NU,    U_NU,    U_NU,    U_NU,    U_NU,    \
                          U_NA,    U_NA,    U_NA,    KC_MSTP, KC_MPLY
 
 // Navigation.
-#define LAYOUT_LAYER_NAV                                                                         \
+#define LAYOUT_NAV                                                                               \
     __________________RESET_L__________________,    DEL_LINE, _______, _______, _______, _______,\
     ______________HOME_ROW_GASC_L______________,    CW_TOGG, KC_LEFT, KC_DOWN,   KC_UP, KC_RGHT, \
     _________________COPY_PASTA________________,    KC_INS, KC_HOME, KC_PGDN, KC_PGUP,  KC_END,  \
                          U_NA,    U_NA,    U_NA,    KC_BSPC, KC_ENT
 
 // Code.
-#define LAYOUT_LAYER_CODE                                                                        \
+#define LAYOUT_CODE                                                                              \
     __________________RESET_L__________________,    KC_EXLM, KC_LBRC, KC_RBRC, KC_DLR,  KC_PERC, \
     ______________HOME_ROW_GASC_L______________,    KC_PIPE, KC_LCBR, KC_RCBR, KC_EQL,  KC_SCLN, \
     _________________COPY_PASTA________________,    KC_AMPR, S(KC_9), S(KC_0), S(KC_EQL),KC_BSLS,\
                       U_NA,    U_NA,    U_NA,       KC_DEL, A(KC_3)
 
 // Numerals.
-#define LAYOUT_LAYER_NUM                                                                         \
+#define LAYOUT_NUM                                                                               \
     KC_LBRC,    KC_7,    KC_8,    KC_9,  KC_EQL,    __________________RESET_R__________________, \
     KC_COLN,    KC_4,    KC_5,    KC_6, KC_MINS,    ______________HOME_ROW_GASC_R______________, \
      KC_GRV,    KC_1,    KC_2,    KC_3, KC_UNDS,    _________________COPY_PASTA________________, \
@@ -189,20 +192,30 @@ bool get_combo_must_hold(uint16_t index, combo_t *combo) {
 
 
 // Function keys.
-#define LAYOUT_LAYER_FUN                                                                         \
+#define LAYOUT_FUN                                                                               \
      KC_F12,   KC_F7,   KC_F8,   KC_F9, KC_PSCR,    __________________RESET_R__________________, \
      KC_F11,   KC_F4,   KC_F5,   KC_F6, KC_SCRL,    ______________HOME_ROW_GASC_R______________, \
      KC_F10,   KC_F1,   KC_F2,   KC_F3, KC_PAUS,    _________________COPY_PASTA________________, \
                        KC_APP,  KC_SPC,  KC_TAB,    U_NA,    U_NA
-// Mouse.
-#define LAYOUT_LAYER_MOUSE                                                                       \
+// Mouse (Auto)
+
+/*
+#define LAYOUT_MOUSE                                                                            \
     _______, _______, _______, _______, _______,    _______, _______, _______, _______, _______, \
-    SNIPE,   KC_BTN3, KC_BTN2, KC_BTN1, _______,    _______, _______, _______, _______, _______, \
-    _______, _______, _______, _______, _______,    _______, _______, _______, _______, _______, \
-                      _______, _______, _______,    _______, _______
+    _______, KC_BTN3, KC_BTN2, KC_BTN1, _______,    _______, _______, _______, _______, _______, \
+    _______, _______, _______, _______, _______,    _______, WH_L,    WH_D,    WH_U,    WH_R,    \
+                      SNIPE,   _______, _______,    _______, _______
+*/
+
+// Mouse (manual)
+#define LAYOUT_MOUSE                                                                             \
+    S_D_MOD, _______, _______, _______, _______,    _______, _______, _______, _______, _______, \
+    DPI_MOD, _______, _______, _______, _______,    _______, _______, _______, _______, _______, \
+    _______, SNIPE,   _______, _______, _______,    _______, WH_L,    WH_D,    WH_U,    WH_R,    \
+                      KC_BTN3, KC_BTN1, KC_BTN2,    _______, _______
 
 // Adjust.
-#define LAYOUT_LAYER_ADJUST                                                                      \
+#define LAYOUT_ADJUST                                                                            \
     S_D_MOD, _______, _______, _______, _______,    _______, _______, _______, _______, _______, \
     DPI_MOD, _______, _______, _______, _______,    _______, _______, _______, _______, _______, \
     _______, _______, _______, _______, _______,    _______, _______, _______, _______, _______, \
@@ -231,23 +244,23 @@ bool get_combo_must_hold(uint16_t index, combo_t *combo) {
             L10,        L11,        L12,        L13,        L14,  \
             R15,        R16,        R17,        R18,        R19,  \
       MOUSE(L20),       L21,        L22,        L23,        L24,  \
-            R25,        R26,        R27,        R28,  ADJUST(R29), \
+            R25,        R26,        R27,        R28,  MOUSE(R29), \
       __VA_ARGS__
 #define MOUSE_MOD(...) _MOUSE_MOD(__VA_ARGS__)
 
 #define LAYOUT_wrapper(...) LAYOUT(__VA_ARGS__)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-  [LAYER_BASE] = LAYOUT_wrapper(
-    MOUSE_MOD(HOME_ROW_MOD_GASC(LAYOUT_LAYER_BASE_QWERTY))
+  [_BASE] = LAYOUT_wrapper(
+    MOUSE_MOD(HOME_ROW_MOD_GASC(LAYOUT_BASE_QWERTY))
   ),
-  [LAYER_MEDIA] = LAYOUT_wrapper(LAYOUT_LAYER_MEDIA),
-  [LAYER_NAV] = LAYOUT_wrapper(LAYOUT_LAYER_NAV),
-  [LAYER_CODE] = LAYOUT_wrapper(LAYOUT_LAYER_CODE),
-  [LAYER_NUM] = LAYOUT_wrapper(LAYOUT_LAYER_NUM),
-  [LAYER_FUN] = LAYOUT_wrapper(LAYOUT_LAYER_FUN),
-  [LAYER_ADJUST] = LAYOUT_wrapper(LAYOUT_LAYER_ADJUST),
-  [LAYER_MOUSE]  = LAYOUT_wrapper(LAYOUT_LAYER_MOUSE),
+  [_MEDIA] = LAYOUT_wrapper(LAYOUT_MEDIA),
+  [_NAV] = LAYOUT_wrapper(LAYOUT_NAV),
+  [_CODE] = LAYOUT_wrapper(LAYOUT_CODE),
+  [_NUM] = LAYOUT_wrapper(LAYOUT_NUM),
+  [_FUN] = LAYOUT_wrapper(LAYOUT_FUN),
+  [_ADJUST] = LAYOUT_wrapper(LAYOUT_ADJUST),
+  [_MOUSE]  = LAYOUT_wrapper(LAYOUT_MOUSE),
 };
 // clang-format on
 
@@ -260,7 +273,7 @@ layer_state_t layer_state_set_kb(layer_state_t state) {
 #endif // POINTING_DEVICE_ENABLE && CHARYBDIS_AUTO_SNIPING_ON_LAYER
 
 void pointing_device_init_user(void) {
-    set_auto_mouse_enable(true); // always required before the auto mouse feature will work
+    // set_auto_mouse_enable(true); // always required before the auto mouse feature will work
 }
 
 uint8_t track_mode = 0;
@@ -272,6 +285,9 @@ int16_t cum_x         = 0;
 int16_t cum_y         = 0;
 int16_t tap_factor    = 100;
 int16_t switch_factor = 250;
+
+bool mouse_is_down = false;
+uint16_t last_mouse_press   = 0;
 
 void tap_code_fast(uint8_t code) {
     register_code(code);
@@ -333,14 +349,13 @@ void tap_switcher(void) {
 }
 
 layer_state_t layer_state_set_user(layer_state_t state) {
-    if (IS_LAYER_ON_STATE(state, LAYER_NAV)) {
-        charybdis_set_pointer_dragscroll_enabled(true);
-    } else {
-        charybdis_set_pointer_dragscroll_enabled(false);
-    }
-    if (IS_LAYER_ON_STATE(state, LAYER_MEDIA)) {
+    // dragscroll when on the _NAV layer
+    charybdis_set_pointer_dragscroll_enabled(IS_LAYER_ON_STATE(state, _NAV));
+
+    // other trackball modes
+    if (IS_LAYER_ON_STATE(state, _MEDIA)) {
         track_mode = media_mode;
-    } else if (IS_LAYER_ON_STATE(state, LAYER_CODE)) {
+    } else if (IS_LAYER_ON_STATE(state, _CODE)) {
         track_mode = carret_mode;
     } else {
         track_mode = cursor_mode;
@@ -352,7 +367,11 @@ bool winswitch_active = false;
 bool tabswitch_active = false;
 
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
-    if (track_mode != cursor_mode || winswitch_active || tabswitch_active) {
+    // Pause mouse report updates for short time after clicking to make it easier
+    // to double click with small movement of trackball
+    bool mouse_pause = mouse_is_down && timer_elapsed(last_mouse_press) < 150;
+
+    if (track_mode != cursor_mode || winswitch_active || tabswitch_active || mouse_pause) {
         // Nerf mouse_report as we're doing something else
         cum_x += mouse_report.x;
         cum_y -= mouse_report.y;
@@ -370,9 +389,18 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    // mods_active = !(get_mods() & (MOD_MASK_GUI | MOD_MASK_SHIFT | MOD_MASK_ALT | MOD_MASK_CTRL));
-    // gui_active  = (get_mods() & MOD_BIT(KC_LGUI)) == MOD_BIT(KC_LGUI);
+    // Pause mouse report updates for short time after clicking to make it easier
+    // to double click with small movement of trackball
+    if (keycode == KC_BTN1 || keycode == KC_BTN2 || keycode == KC_BTN3) {
+        if (record->event.pressed) {
+            mouse_is_down    = true;
+            last_mouse_press = timer_read();
+        } else {
+            mouse_is_down = false;
+        }
+    }
 
+    // custom keycodes
     switch (keycode) {
         case WINSWITCH:
             if (record->event.pressed) {
