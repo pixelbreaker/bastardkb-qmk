@@ -17,6 +17,8 @@
  */
 #pragma once
 
+#define COMBO_TERM 60
+
 #ifdef VIA_ENABLE
 /* Via configuration. */
 #    define DYNAMIC_KEYMAP_LAYER_COUNT 8
@@ -81,6 +83,8 @@
  */
 #define IGNORE_MOD_TAP_INTERRUPT
 
+// #define NO_USB_STARTUP_CHECK
+
 /** Charybdis-specific features. */
 
 #ifdef POINTING_DEVICE_ENABLE
@@ -94,10 +98,12 @@
 #    define CHARYBDIS_DRAGSCROLL_REVERSE_Y
 
 #    define POINTING_DEVICE_AUTO_MOUSE_ENABLE
-// only required if not setting mouse layer elsewhere
-#    define AUTO_MOUSE_DEFAULT_LAYER 3
-#    define AUTO_MOUSE_DEBOUNCE 10
-#    define AUTO_MOUSE_DELAY 800
+#    ifdef POINTING_DEVICE_AUTO_MOUSE_ENABLE
+#        define AUTO_MOUSE_DEFAULT_LAYER 3
+#        define AUTO_MOUSE_TIME 700
+#        define AUTO_MOUSE_DEBOUNCE 25
+#        define AUTO_MOUSE_DELAY 500
+#    endif
 
 /* Trackball angle adjustment. */
 #    ifdef ROTATIONAL_TRANSFORM_ANGLE
