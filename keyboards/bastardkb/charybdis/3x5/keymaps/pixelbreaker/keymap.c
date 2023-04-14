@@ -31,7 +31,6 @@ enum custom_layers { _BASE = 0, _MEDIA, _NAV, _MOUSE, _CODE, _NUM, _FUN, _ADJUST
 enum custom_keycodes {
     APPSWITCH = QK_USER,
     TABSWITCH,
-    MACSLEEP,
 };
 // utils
 int max(int num1, int num2) {
@@ -58,6 +57,9 @@ int8_t sign(int x) {
 #define BSP_NUM LT(_NUM, KC_BSPC)
 #define ENT_FUN LT(_FUN, KC_ENT)
 
+#define OSM_HYPR OSM(MOD_HYPR)
+#define OSM_MEH OSM(MOD_MEH)
+
 #define MOUSE(KC) LT(_MOUSE, KC)
 #define ADJUST(KC) LT(_ADJUST, KC)
 
@@ -67,6 +69,7 @@ int8_t sign(int x) {
 #define USR_CUT G(KC_X)
 #define USR_UND G(KC_Z)
 #define VOL_SML A(KC_LSFT)
+#define MACSLEEP RCS(KC_KB_POWER)
 
 // CAGS
 #define HRM_A LCTL_T(KC_A)
@@ -143,8 +146,8 @@ enum combos {
 uint16_t COMBO_LEN = COMBO_LENGTH;
 
 combo_t key_combos[] = {
-    [COMBO_HYPR]      = COMBO(combo_hypr, OSM(MOD_HYPR)), // KC_HYPR),
-    [COMBO_MEH]       = COMBO(combo_meh, OSM(MOD_MEH)),   // KC_MEH),
+    [COMBO_HYPR]      = COMBO(combo_hypr, OSM_HYPR), // KC_HYPR),
+    [COMBO_MEH]       = COMBO(combo_meh, OSM_MEH),   // KC_MEH),
     [COMBO_SYMBOLS]   = COMBO(combo_symbols, LM(_NUM, MOD_LSFT)),
     [COMBO_APPSWITCH] = COMBO(combo_appswitch, APPSWITCH),
     [COMBO_TABSWITCH] = COMBO(combo_tabswitch, TABSWITCH),
@@ -218,9 +221,10 @@ bool get_combo_must_hold(uint16_t index, combo_t *combo) {
 |, -, /, =, ;,
 &, _, #, @, \,
 */
+
 // Code.
 #define LAYOUT_CODE                                                                              \
-    __________________RESET_L__________________,    KC_EXLM, S(KC_EQL),S(KC_8),KC_DLR,  KC_PERC, \
+    __________________RESET_L__________________,    KC_EXLM, S(KC_EQL),S(KC_8),KC_DLR,  KC_GRV, \
     ______________HOME_ROW_CAGS_L______________,    KC_PIPE, KC_MINS, KC_SLSH, KC_EQL,  KC_SCLN, \
     ________________COPY_PASTA_________________,    KC_AMPR, KC_UNDS, A(KC_3), S(KC_2), KC_BSLS, \
                       U_NA,    U_NA,    U_NA,       KC_DEL, U_NA
@@ -390,19 +394,16 @@ void tap_media(void) {
                 cum_y = 0;
             }
         } else {
-            if (cum_y > 0) {
-                for (int8_t i = 0; i <= (abs(cum_x) + abs(cum_y)) / tap_factor; i++) {
+            for (int8_t i = 0; i <= (abs(cum_x) + abs(cum_y)) / tap_factor; i++) {
+                if (cum_y > 0) {
                     tap_code_fast(KC_VOLU);
                     cum_y = max(cum_y - tap_factor, 0);
-                }
-                cum_x = 0;
-            } else {
-                for (int8_t i = 0; i <= (abs(cum_x) + abs(cum_y)) / tap_factor; i++) {
+                } else {
                     tap_code_fast(KC_VOLD);
                     cum_y = min(cum_y + tap_factor, 0);
                 }
-                cum_x = 0;
             }
+            cum_x = 0;
         }
     }
 }
@@ -469,28 +470,23 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    // Pause mouse report updates for short time after clicking to make it easier
-    // to double click with small movement of trackball
-    if (keycode == KC_BTN1 || keycode == KC_BTN2 || keycode == KC_BTN3) {
-        if (record->event.pressed) {
-            mouse_is_down    = true;
-            last_mouse_press = timer_read();
-        } else {
-            mouse_is_down = false;
-        }
+    // if thumb cluster keys are pressed, turn off the mouse layer
+    if (record->event.key.row % (MATRIX_ROWS / 2) >= 3 && record->event.pressed) {
+#ifdef POINTING_DEVICE_AUTO_MOUSE_ENABLE
+        layer_off(_MOUSE);
+#endif
     }
 
     // custom keycodes
     switch (keycode) {
-        // cancel auto mouse if using thumb cluster
-        case ESC_MED:
-        case SPC_NAV:
-        case TAB_CODE:
-        case BSP_NUM:
-        case ENT_FUN:
-        case OSM(MOD_HYPR):
+        // Pause mouse report updates for short time after clicking to make it easier
+        // to double click with small movement of trackball
+        case KC_BTN1 ... KC_BTN3:
             if (record->event.pressed) {
-                layer_off(_MOUSE);
+                mouse_is_down    = true;
+                last_mouse_press = timer_read();
+            } else {
+                mouse_is_down = false;
             }
             return true;
 
@@ -520,17 +516,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
             }
             tabswitch_active = record->event.pressed;
-            return false;
-
-        case MACSLEEP:
-            if (record->event.pressed) {
-                register_code(KC_RSFT);
-                register_code(KC_RCTL);
-                register_code(KC_SYSTEM_POWER);
-                unregister_code(KC_SYSTEM_POWER);
-                unregister_code(KC_RCTL);
-                unregister_code(KC_RSFT);
-            }
             return false;
 
         default:
