@@ -17,7 +17,7 @@
  */
 #pragma once
 
-#define COMBO_TERM 60
+#define COMBO_TERM 50
 #define USB_POLLING_INTERVAL_MS 1
 
 #ifdef VIA_ENABLE

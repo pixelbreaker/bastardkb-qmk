@@ -100,11 +100,12 @@ const uint16_t PROGMEM combo_symbols[] = {BSP_NUM, ENT_FUN, COMBO_END};  // Shif
 const uint16_t PROGMEM combo_capsword[] = {LSFT_T(KC_F), RSFT_T(KC_J), COMBO_END}; // Capsword
 
 const uint16_t PROGMEM combo_appswitch[] = {KC_C, KC_V, COMBO_END}; // Gui+tab application switcher with trackball
-const uint16_t PROGMEM combo_tabswitch[] = {KC_E, KC_R, COMBO_END}; // Ctrl+tab tab switcher
+const uint16_t PROGMEM combo_tabswitch[] = {KC_X, KC_C, COMBO_END}; // Ctrl+tab tab switcher
 
 const uint16_t PROGMEM combo_grv[]  = {KC_O, KC_P, COMBO_END};                    // Grave accent
 const uint16_t PROGMEM combo_scln[] = {LALT_T(KC_L), RCTL_T(KC_QUOT), COMBO_END}; // Semi-colon
-const uint16_t PROGMEM combo_at[]   = {KC_COMMA, KC_DOT, COMBO_END};              // At
+const uint16_t PROGMEM combo_at[]   = {KC_COMM, KC_DOT, COMBO_END};               // At
+const uint16_t PROGMEM combo_hash[] = {KC_M, KC_COMM, COMBO_END};                 // Hash
 
 const uint16_t PROGMEM combo_lchv[] = {KC_T, KC_G, COMBO_END};  // Left chevron
 const uint16_t PROGMEM combo_rchv[] = {KC_Y, KC_H, COMBO_END};  // Right chevron
@@ -125,6 +126,7 @@ enum combos {
     COMBO_GRV,
     COMBO_SCLN,
     COMBO_AT,
+    COMBO_HASH,
     COMBO_CAPSWORD,
     COMBO_LCHV,
     COMBO_RCHV,
@@ -149,6 +151,7 @@ combo_t key_combos[] = {
     [COMBO_GRV]       = COMBO(combo_grv, KC_GRV),
     [COMBO_SCLN]      = COMBO(combo_scln, KC_SCLN),
     [COMBO_AT]        = COMBO(combo_at, S(KC_2)),
+    [COMBO_HASH]      = COMBO(combo_hash, A(KC_3)),
     [COMBO_CAPSWORD]  = COMBO(combo_capsword, CW_TOGG),
     [COMBO_LCHV]      = COMBO(combo_lchv, S(KC_COMMA)),
     [COMBO_RCHV]      = COMBO(combo_rchv, S(KC_DOT)),
@@ -210,12 +213,25 @@ bool get_combo_must_hold(uint16_t index, combo_t *combo) {
     ________________COPY_PASTA_________________,    KC_INS, KC_HOME, KC_PGDN, KC_PGUP,  KC_END,  \
                          U_NA,    U_NA,    U_NA,    KC_BSPC, KC_ENT
 
+/*
+!, +, *, $, `,
+|, -, /, =, ;,
+&, _, #, @, \,
+*/
 // Code.
+#define LAYOUT_CODE                                                                              \
+    __________________RESET_L__________________,    KC_EXLM, S(KC_EQL),S(KC_8),KC_DLR,  KC_PERC, \
+    ______________HOME_ROW_CAGS_L______________,    KC_PIPE, KC_MINS, KC_SLSH, KC_EQL,  KC_SCLN, \
+    ________________COPY_PASTA_________________,    KC_AMPR, KC_UNDS, A(KC_3), S(KC_2), KC_BSLS, \
+                      U_NA,    U_NA,    U_NA,       KC_DEL, U_NA
+
+/*
 #define LAYOUT_CODE                                                                              \
     __________________RESET_L__________________,    KC_EXLM, KC_LBRC, KC_RBRC, KC_DLR,  KC_PERC, \
     ______________HOME_ROW_CAGS_L______________,    KC_PIPE, KC_LCBR, KC_RCBR, KC_EQL,  KC_SCLN, \
     ________________COPY_PASTA_________________,    KC_AMPR, S(KC_9), S(KC_0), S(KC_EQL),KC_BSLS,\
-                      U_NA,    U_NA,    U_NA,       KC_DEL, A(KC_3)
+                      U_NA,    U_NA,    U_NA,       KC_DEL, U_NA
+*/
 
 // Numerals.
 #define LAYOUT_NUM                                                                               \
