@@ -18,6 +18,7 @@
 #pragma once
 
 #define COMBO_TERM 60
+#define USB_POLLING_INTERVAL_MS 1
 
 #ifdef VIA_ENABLE
 /* Via configuration. */
@@ -36,7 +37,7 @@
  * See docs.qmk.fm/using-qmk/software-features/tap_hold#tapping-term
  */
 #ifndef TAPPING_TERM
-#    define TAPPING_TERM 250
+#    define TAPPING_TERM 200
 #endif // TAPPING_TERM
 
 /**
@@ -92,6 +93,10 @@
 // - `CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_TIMEOUT_MS`
 // - `CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD`
 // #    define CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
+#    ifdef CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
+#        define CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_TIMEOUT_MS 800
+#        define CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD 8
+#    endif
 
 // Flip horizontal direction for drag-scroll.
 // #    define CHARYBDIS_DRAGSCROLL_REVERSE_X
@@ -101,7 +106,7 @@
 #    ifdef POINTING_DEVICE_AUTO_MOUSE_ENABLE
 #        define AUTO_MOUSE_DEFAULT_LAYER 3
 #        define AUTO_MOUSE_TIME 700
-#        define AUTO_MOUSE_DEBOUNCE 25
+#        define AUTO_MOUSE_DEBOUNCE 10
 #        define AUTO_MOUSE_DELAY 500
 #    endif
 
