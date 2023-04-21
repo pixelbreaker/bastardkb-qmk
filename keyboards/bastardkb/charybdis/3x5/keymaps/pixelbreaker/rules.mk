@@ -5,3 +5,5 @@ CAPS_WORD_ENABLE = yes
 COMBO_ENABLE = yes
 MOUSEKEY_ENABLE = yes
 AUTOCORRECT_ENABLE = yes
+
+SRC += features/achordion.c

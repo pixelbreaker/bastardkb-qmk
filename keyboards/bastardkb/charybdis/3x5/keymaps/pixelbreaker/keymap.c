@@ -31,6 +31,9 @@ enum custom_layers { _BASE = 0, _MEDIA, _NAV, _MOUSE, _CODE, _NUM, _FUN, _ADJUST
 enum custom_keycodes {
     APPSWITCH = QK_USER,
     TABSWITCH,
+    BI_MEMARR,
+    BI_ARRFN,
+    SNIP_ARRFN,
 };
 // utils
 int max(int num1, int num2) {
@@ -71,7 +74,7 @@ int8_t sign(int x) {
 #define VOL_SML A(KC_LSFT)
 #define MACSLEEP RCS(KC_KB_POWER)
 
-// CAGS
+// CAGS (Qwerty)
 #define HRM_A LCTL_T(KC_A)
 #define HRM_S LALT_T(KC_S)
 #define HRM_D LGUI_T(KC_D)
@@ -103,27 +106,34 @@ const uint16_t PROGMEM combo_hypr[]   = {SPC_NAV, TAB_CODE, COMBO_END}; // HYPR 
 const uint16_t PROGMEM combo_meh[]    = {SPC_NAV, ESC_MED, COMBO_END};  // MEH One shot mod
 const uint16_t PROGMEM combo_delete[] = {BSP_NUM, ENT_FUN, COMBO_END};  // Shifted Num layer
 
-const uint16_t PROGMEM combo_capsword[] = {LSFT_T(KC_F), RSFT_T(KC_J), COMBO_END}; // Capsword
+const uint16_t PROGMEM combo_capsword[] = {HRM_F, HRM_J, COMBO_END}; // Capsword
 
 const uint16_t PROGMEM combo_appswitch[] = {KC_C, KC_V, COMBO_END}; // Gui+tab application switcher with trackball
 const uint16_t PROGMEM combo_tabswitch[] = {KC_X, KC_C, COMBO_END}; // Ctrl+tab tab switcher
 
-const uint16_t PROGMEM combo_grv[]  = {KC_O, KC_P, COMBO_END};                    // Grave accent
-const uint16_t PROGMEM combo_scln[] = {LALT_T(KC_L), RCTL_T(KC_QUOT), COMBO_END}; // Semi-colon
-const uint16_t PROGMEM combo_at[]   = {KC_COMM, KC_DOT, COMBO_END};               // At
-const uint16_t PROGMEM combo_hash[] = {KC_M, KC_COMM, COMBO_END};                 // Hash
-
-const uint16_t PROGMEM combo_eq[]  = {KC_T, KC_G, COMBO_END}; // Hash
-const uint16_t PROGMEM combo_min[] = {KC_G, KC_B, COMBO_END}; // Hash
-
-// const uint16_t PROGMEM combo_lchv[] = {KC_T, KC_G, COMBO_END};  // Left chevron
-// const uint16_t PROGMEM combo_rchv[] = {KC_Y, KC_H, COMBO_END};  // Right chevron
-// const uint16_t PROGMEM combo_lpar[] = {KC_R, HRM_F, COMBO_END}; // Left parenthesis
-// const uint16_t PROGMEM combo_rpar[] = {KC_U, HRM_J, COMBO_END}; // Right parenthesis
-// const uint16_t PROGMEM combo_lbrc[] = {KC_E, HRM_D, COMBO_END}; // Left bracket
-// const uint16_t PROGMEM combo_rbrc[] = {KC_I, HRM_K, COMBO_END}; // Right bracket
-// const uint16_t PROGMEM combo_lsqb[] = {KC_W, HRM_S, COMBO_END}; // Left square bracket
-// const uint16_t PROGMEM combo_rsqb[] = {KC_O, HRM_L, COMBO_END}; // Right square bracket
+const uint16_t PROGMEM combo_l11[]       = {KC_Q, HRM_A, COMBO_END};
+const uint16_t PROGMEM combo_l12[]       = {KC_W, HRM_S, COMBO_END};
+const uint16_t PROGMEM combo_l13[]       = {KC_E, HRM_D, COMBO_END};
+const uint16_t PROGMEM combo_l14[]       = {KC_R, HRM_F, COMBO_END};
+const uint16_t PROGMEM combo_l15[]       = {KC_T, KC_G, COMBO_END};
+const uint16_t PROGMEM combo_l21[]       = {HRM_A, MOUSE(KC_Z), COMBO_END};
+const uint16_t PROGMEM combo_l22[]       = {HRM_S, KC_X, COMBO_END};
+const uint16_t PROGMEM combo_l23[]       = {HRM_D, KC_C, COMBO_END};
+const uint16_t PROGMEM combo_l24[]       = {HRM_F, KC_V, COMBO_END};
+const uint16_t PROGMEM combo_l25[]       = {KC_G, KC_B, COMBO_END};
+const uint16_t PROGMEM combo_r11[]       = {KC_Y, KC_H, COMBO_END};
+const uint16_t PROGMEM combo_r12[]       = {KC_U, HRM_J, COMBO_END};
+const uint16_t PROGMEM combo_r13[]       = {KC_I, HRM_K, COMBO_END};
+const uint16_t PROGMEM combo_r14[]       = {KC_O, HRM_L, COMBO_END};
+const uint16_t PROGMEM combo_r15[]       = {KC_P, HRM_QUOT, COMBO_END};
+const uint16_t PROGMEM combo_r21[]       = {KC_H, KC_M, COMBO_END};
+const uint16_t PROGMEM combo_r22[]       = {HRM_J, KC_N, COMBO_END};
+const uint16_t PROGMEM combo_r23[]       = {HRM_K, KC_COMM, COMBO_END};
+const uint16_t PROGMEM combo_r24[]       = {HRM_L, KC_DOT, COMBO_END};
+const uint16_t PROGMEM combo_r25[]       = {HRM_QUOT, ADJUST(KC_SLSH), COMBO_END};
+const uint16_t PROGMEM combo_memarr[]    = {KC_H, KC_N, COMBO_END};         // Right bracket
+const uint16_t PROGMEM combo_arrfn[]     = {HRM_J, KC_M, COMBO_END};        // Right square bracket
+const uint16_t PROGMEM combo_fullarrfn[] = {HRM_A, MOUSE(KC_Z), COMBO_END}; // Right square bracket
 
 // clang-format off
 enum combos {
@@ -132,60 +142,63 @@ enum combos {
     COMBO_DELETE,
     COMBO_APPSWITCH,
     COMBO_TABSWITCH,
-    COMBO_GRV,
-    COMBO_SCLN,
-    COMBO_AT,
-    COMBO_HASH,
     COMBO_CAPSWORD,
-    COMBO_EQ,
-    COMBO_MIN,
-    // COMBO_LCHV,
-    // COMBO_RCHV,
-    // COMBO_LPAR,
-    // COMBO_RPAR,
-    // COMBO_LBRC,
-    // COMBO_RBRC,
-    // COMBO_LSQB,
-    // COMBO_RSQB,
+    COMBO_L11,
+    COMBO_L12,
+    COMBO_L13,
+    COMBO_L14,
+    COMBO_L15,
+    COMBO_L21,
+    COMBO_L22,
+    COMBO_L23,
+    COMBO_L24,
+    COMBO_L25,
+    COMBO_R11,
+    COMBO_R12,
+    COMBO_R13,
+    COMBO_R14,
+    COMBO_R15,
+    COMBO_R21,
+    COMBO_R22,
+    COMBO_R23,
+    COMBO_R24,
+    COMBO_R25,
     COMBO_LENGTH
 };
 
 uint16_t COMBO_LEN = COMBO_LENGTH;
 
 combo_t key_combos[] = {
-    [COMBO_HYPR]      = COMBO(combo_hypr, OSM_HYPR), // KC_HYPR),
-    [COMBO_MEH]       = COMBO(combo_meh, OSM_MEH),   // KC_MEH),
-    [COMBO_DELETE]    = COMBO(combo_delete, KC_DEL),
-    [COMBO_APPSWITCH] = COMBO(combo_appswitch, APPSWITCH),
-    [COMBO_TABSWITCH] = COMBO(combo_tabswitch, TABSWITCH),
-    [COMBO_GRV]       = COMBO(combo_grv, KC_GRV),
-    [COMBO_SCLN]      = COMBO(combo_scln, KC_SCLN),
-    [COMBO_AT]        = COMBO(combo_at, S(KC_2)),
-    [COMBO_HASH]      = COMBO(combo_hash, A(KC_3)),
-    [COMBO_CAPSWORD]  = COMBO(combo_capsword, CW_TOGG),
-    [COMBO_EQ]  = COMBO(combo_eq, KC_EQL),
-    [COMBO_MIN]  = COMBO(combo_min, KC_MINS),
-    // [COMBO_LCHV]      = COMBO(combo_lchv, S(KC_COMMA)),
-    // [COMBO_RCHV]      = COMBO(combo_rchv, S(KC_DOT)),
-    // [COMBO_LPAR]      = COMBO(combo_lpar, S(KC_LBRC)),
-    // [COMBO_RPAR]      = COMBO(combo_rpar, S(KC_RBRC)),
-    // [COMBO_LBRC]      = COMBO(combo_lbrc, S(KC_9)),
-    // [COMBO_RBRC]      = COMBO(combo_rbrc, S(KC_0)),
-    // [COMBO_LSQB]      = COMBO(combo_lsqb, KC_LBRC),
-    // [COMBO_RSQB]      = COMBO(combo_rsqb, KC_RBRC),
+    [COMBO_HYPR]        = COMBO(combo_hypr, OSM_HYPR),
+    [COMBO_MEH]         = COMBO(combo_meh, OSM_MEH),
+    [COMBO_DELETE]      = COMBO(combo_delete, KC_DEL),
+
+    [COMBO_APPSWITCH]   = COMBO(combo_appswitch, APPSWITCH),
+    [COMBO_TABSWITCH]   = COMBO(combo_tabswitch, TABSWITCH),
+    [COMBO_CAPSWORD]    = COMBO(combo_capsword, CW_TOGG),
+
+    [COMBO_L11]       = COMBO(combo_l11, KC_TILD),
+    [COMBO_L12]       = COMBO(combo_l12, KC_LBRC),
+    [COMBO_L13]       = COMBO(combo_l13, KC_LPRN),
+    [COMBO_L14]       = COMBO(combo_l14, KC_LCBR),
+    [COMBO_L15]       = COMBO(combo_l15, KC_LT),
+    [COMBO_L21]       = COMBO(combo_l21, SNIP_ARRFN),
+    [COMBO_L22]       = COMBO(combo_l22, KC_NO),
+    [COMBO_L23]       = COMBO(combo_l23, KC_BTN2),
+    [COMBO_L24]       = COMBO(combo_l24, KC_BTN1),
+    [COMBO_L25]       = COMBO(combo_l25, KC_BTN3),
+
+    [COMBO_R11]       = COMBO(combo_r11, KC_GT),
+    [COMBO_R12]       = COMBO(combo_r12, KC_RCBR),
+    [COMBO_R13]       = COMBO(combo_r13, KC_RPRN),
+    [COMBO_R14]       = COMBO(combo_r14, KC_RBRC),
+    [COMBO_R15]       = COMBO(combo_r15, KC_GRV),
+    [COMBO_R21]       = COMBO(combo_r21, BI_MEMARR), // ->
+    [COMBO_R22]       = COMBO(combo_r22, BI_ARRFN), // =>
+    [COMBO_R23]       = COMBO(combo_r23, A(KC_3)), // #
+    [COMBO_R24]       = COMBO(combo_r24, S(KC_2)), // @
+    [COMBO_R25]       = COMBO(combo_r25, KC_SCLN),
 };
-
-// clang-format on
-bool get_combo_must_hold(uint16_t index, combo_t *combo) {
-    switch (index) {
-        case COMBO_APPSWITCH:
-        case COMBO_TABSWITCH:
-            return true;
-    }
-
-    return false;
-}
-// clang-format off
 
 /** Convenience key shorthands. */
 #define U_NA KC_NO // Present but not available for use.
@@ -208,7 +221,7 @@ bool get_combo_must_hold(uint16_t index, combo_t *combo) {
     KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,       KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    \
     HRM_A,   HRM_S,   HRM_D,   HRM_F,   KC_G,       KC_H,    HRM_J,   HRM_K,   HRM_L,   HRM_QUOT,\
     KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,       KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, \
-                      ESC_MED, SPC_NAV, TAB_CODE,   BSP_NUM, ENT_FUN
+                      ESC_MED, SPC_NAV, TAB_CODE,  BSP_NUM, ENT_FUN
 
 // Media.
 #define LAYOUT_MEDIA                                                                             \
@@ -219,14 +232,14 @@ bool get_combo_must_hold(uint16_t index, combo_t *combo) {
 
 // Navigation.
 #define LAYOUT_NAV                                                                               \
-    __________________RESET_L__________________,    DEL_LINE, _______, _______, _______, _______,\
-    ______________HOME_ROW_CAGS_L______________,    CW_TOGG, KC_LEFT, KC_DOWN,   KC_UP, KC_RGHT, \
-    ________________COPY_PASTA_________________,    KC_INS, KC_HOME, KC_PGDN, KC_PGUP,  KC_END,  \
+    __________________RESET_L__________________,    CW_TOGG, _______, _______, _______, _______, \
+    ______________HOME_ROW_CAGS_L______________,    DEL_LINE,KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT, \
+    ________________COPY_PASTA_________________,    KC_INS, KC_HOME, KC_PGDN,  KC_PGUP, KC_END,  \
                          U_NA,    U_NA,    U_NA,    KC_BSPC, KC_ENT
 
 /*
 !, +, *, $, `,
-|, -, /, =, ;,
+|, -, /, =, :,
 &, _, #, @, \,
 */
 
@@ -234,8 +247,8 @@ bool get_combo_must_hold(uint16_t index, combo_t *combo) {
 #define LAYOUT_CODE                                                                              \
      _______,_______,KC_LBRC, KC_RBRC, _______,     KC_EXLM, KC_PLUS, KC_ASTR, KC_DLR,  KC_GRV,  \
      _______,KC_LT,  KC_LPRN, KC_RPRN, KC_GT,       KC_PIPE, KC_MINS, KC_SLSH, KC_EQL,  KC_COLN, \
-     _______,_______,KC_LCBR, KC_RCBR, _______,     KC_AMPR, KC_UNDS, GB_HASH, GB_AT, KC_BSLS, \
-                      U_NA,   _______,  U_NA,       _______, _______
+     _______,_______,KC_LCBR, KC_RCBR, _______,     KC_AMPR, KC_UNDS, GB_HASH, GB_AT,   KC_BSLS, \
+                      U_NA,   _______, U_NA,        _______, _______
 
 /*
 #define LAYOUT_CODE                                                                              \
@@ -489,6 +502,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     // custom keycodes
     switch (keycode) {
+        case OSM_HYPR:
+        case OSM_MEH:
+            if (record->event.pressed) {
+                layer_off(_MOUSE);
+            }
+            return true;
         // Pause mouse report updates for short time after clicking to make it easier
         // to double click with small movement of trackball
         case KC_BTN1 ... KC_BTN3:
@@ -528,10 +547,105 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             tabswitch_active = record->event.pressed;
             return false;
 
+        // COMPLEX combos
+        case BI_MEMARR: // ->
+            if (record->event.pressed) {
+                tap_code16(KC_MINS);
+                tap_code16(KC_GT);
+            }
+            return false;
+
+        case BI_ARRFN: // =>
+            if (record->event.pressed) {
+                tap_code16(KC_EQL);
+                tap_code16(KC_GT);
+            }
+            return false;
+
+        case SNIP_ARRFN: // Full arrow function
+            if (record->event.pressed) {
+                SEND_STRING("() =>\n{\n\n}");
+                tap_code16(KC_UP);
+            }
+            return false;
+
         default:
+#ifndef POINTING_DEVICE_AUTO_MOUSE_ENABLE
+#    ifdef ACHORDION_ENABLE
+            return process_achordion(keycode, record);
+#    else
             return true;
+#    endif
+#endif
     }
 }
+
+/*
+    ACHORDION config
+*/
+#ifndef POINTING_DEVICE_AUTO_MOUSE_ENABLE
+#    ifdef ACHORDION_ENABLE
+
+void matrix_scan_user(void) {
+    achordion_task();
+}
+
+bool achordion_chord(uint16_t tap_hold_keycode, keyrecord_t *tap_hold_record, uint16_t other_keycode, keyrecord_t *other_record) {
+    // Exceptionally consider the following chords as holds, even though they
+    // are on the same hand.
+    switch (tap_hold_keycode) {
+        case HRM_D: // D + S.
+            if (other_keycode == HRM_S) {
+                return true;
+            }
+            break;
+    }
+
+    // Also allow same-hand holds when the other key is in the rows below the
+    // alphas. I need the `% (MATRIX_ROWS / 2)` because my keyboard is split.
+    if (tap_hold_record->event.key.row % (MATRIX_ROWS / 2) >= 3) {
+        return true;
+    }
+
+    // Otherwise, follow the opposite hands rule.
+    return achordion_opposite_hands(tap_hold_record, other_record);
+}
+
+uint16_t achordion_timeout(uint16_t tap_hold_keycode) {
+    switch (tap_hold_keycode) {
+        case ESC_MED:
+        case TAB_CODE:
+        case BSP_NUM:
+        case ENT_FUN:
+        case MOUSE(KC_Z):
+        case ADJUST(KC_SLSH):
+            return 0; // Bypass Achordion for these keys.
+
+        case SPC_NAV:
+            return 300;
+
+        default:
+            return 800;
+    }
+}
+
+bool achordion_eager_mod(uint8_t mod) {
+    switch (mod) {
+        case MOD_LSFT:
+        case MOD_RSFT:
+        case MOD_LCTL:
+        case MOD_RCTL:
+        case MOD_HYPR:
+        case MOD_MEH:
+            return true; // Eagerly apply Shift and Ctrl mods.
+
+        default:
+            return false;
+    }
+}
+
+#    endif
+#endif
 
 bool caps_word_press_user(uint16_t keycode) {
     switch (keycode) {
@@ -551,6 +665,39 @@ bool caps_word_press_user(uint16_t keycode) {
         default:
             return false; // Deactivate Caps Word.
     }
+}
+
+// Combos
+bool get_combo_must_hold(uint16_t index, combo_t *combo) {
+    switch (index) {
+        case COMBO_APPSWITCH:
+        case COMBO_TABSWITCH:
+            return true;
+    }
+
+    return false;
+}
+
+uint16_t get_combo_term(uint16_t index, combo_t *combo) {
+    switch (index) {
+        // thumbs combos tend to be super slow
+        case COMBO_HYPR:
+        case COMBO_MEH:
+            return COMBO_TERM + 100;
+
+        case COMBO_DELETE:
+            return COMBO_TERM + 50;
+
+        // some combos are slooow
+        case COMBO_L21:
+        case COMBO_L23:
+        case COMBO_L24:
+        case COMBO_L25:
+        case COMBO_R25:
+            return COMBO_TERM + 40;
+    }
+
+    return COMBO_TERM;
 }
 
 // reset CPI after wake

@@ -3,6 +3,7 @@
 :teh:         -> the
 :thier        -> their
 :ture         -> true
+i'm:          -> I'm
 accomodate    -> accommodate
 acommodate    -> accommodate
 aparent       -> apparent

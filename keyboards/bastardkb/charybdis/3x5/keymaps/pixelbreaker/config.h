@@ -17,6 +17,8 @@
  */
 #pragma once
 
+#define ACHORDION_ENABLE
+
 #define COMBO_TERM 50
 #define USB_POLLING_INTERVAL_MS 1
 
@@ -37,7 +39,7 @@
  * See docs.qmk.fm/using-qmk/software-features/tap_hold#tapping-term
  */
 #ifndef TAPPING_TERM
-#    define TAPPING_TERM 200
+#    define TAPPING_TERM 180
 #endif // TAPPING_TERM
 
 /**
@@ -102,7 +104,7 @@
 // #    define CHARYBDIS_DRAGSCROLL_REVERSE_X
 #    define CHARYBDIS_DRAGSCROLL_REVERSE_Y
 
-#    define POINTING_DEVICE_AUTO_MOUSE_ENABLE
+// #    define POINTING_DEVICE_AUTO_MOUSE_ENABLE
 #    ifdef POINTING_DEVICE_AUTO_MOUSE_ENABLE
 #        define AUTO_MOUSE_DEFAULT_LAYER 3
 #        define AUTO_MOUSE_TIME 700
