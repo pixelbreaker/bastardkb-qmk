@@ -35,6 +35,7 @@ enum custom_keycodes {
     BI_ARRFN,
     SNIP_ARRFN,
 };
+
 // utils
 int max(int num1, int num2) {
     return (num1 > num2) ? num1 : num2;
@@ -131,9 +132,9 @@ const uint16_t PROGMEM combo_r22[]       = {HRM_J, KC_M, COMBO_END};
 const uint16_t PROGMEM combo_r23[]       = {HRM_K, KC_COMM, COMBO_END};
 const uint16_t PROGMEM combo_r24[]       = {HRM_L, KC_DOT, COMBO_END};
 const uint16_t PROGMEM combo_r25[]       = {HRM_QUOT, ADJ_SLSH, COMBO_END};
-const uint16_t PROGMEM combo_memarr[]    = {KC_H, KC_N, COMBO_END};  // Right bracket
-const uint16_t PROGMEM combo_arrfn[]     = {HRM_J, KC_M, COMBO_END}; // Right square bracket
-const uint16_t PROGMEM combo_fullarrfn[] = {HRM_A, MO_Z, COMBO_END}; // Right square bracket
+const uint16_t PROGMEM combo_memarr[]    = {KC_H, KC_N, COMBO_END};  // ->
+const uint16_t PROGMEM combo_arrfn[]     = {HRM_J, KC_M, COMBO_END}; // =>
+const uint16_t PROGMEM combo_fullarrfn[] = {HRM_A, MO_Z, COMBO_END}; // () => {}
 
 // clang-format off
 enum combos {
@@ -452,7 +453,6 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
         mouse_report.y = 0;
     }
     if (track_mode == MEDIA) {
-        // tap_tb(KC_NO, KC_NO, KC_VOLU, KC_VOLD);
         tap_media();
     } else if (track_mode == CARRET) {
         tap_tb(KC_RIGHT, KC_LEFT, KC_UP, KC_DOWN);
@@ -488,6 +488,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
 #endif
             return true;
+
         // Pause mouse report updates for short time after clicking to make it easier
         // to double click with small movement of trackball
         case KC_BTN1 ... KC_BTN3:
@@ -580,9 +581,9 @@ bool achordion_chord(uint16_t tap_hold_keycode, keyrecord_t *tap_hold_record, ui
 
     // Also allow same-hand holds when the other key is in the rows below the
     // alphas. I need the `% (MATRIX_ROWS / 2)` because my keyboard is split.
-    if (tap_hold_record->event.key.row % (MATRIX_ROWS / 2) >= 3) {
-        return true;
-    }
+    // if (tap_hold_record->event.key.row % (MATRIX_ROWS / 2) >= 3 || other_record->event.key.row % (MATRIX_ROWS / 2) >= 3) {
+    //     return true;
+    // }
 
     // Otherwise, follow the opposite hands rule.
     return achordion_opposite_hands(tap_hold_record, other_record);
@@ -590,6 +591,12 @@ bool achordion_chord(uint16_t tap_hold_keycode, keyrecord_t *tap_hold_record, ui
 
 uint16_t achordion_timeout(uint16_t tap_hold_keycode) {
     switch (tap_hold_keycode) {
+        case ESC_MED:
+        case TAB_CODE:
+        case BSP_NUM:
+        case ENT_FUN:
+            return 0;
+
         case MO_Z:
             return 150;
 
