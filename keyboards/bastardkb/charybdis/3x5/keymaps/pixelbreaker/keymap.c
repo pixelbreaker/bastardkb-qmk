@@ -63,8 +63,8 @@ int8_t sign(int x) {
 #define OSM_HYPR OSM(MOD_HYPR)
 #define OSM_MEH OSM(MOD_MEH)
 
-#define MOUSE(KC) LT(_MOUSE, KC)
-#define ADJUST(KC) LT(_ADJUST, KC)
+#define MO_Z LT(_MOUSE, KC_Z)
+#define ADJ_SLSH LT(_ADJUST, KC_SLSH)
 
 #define USR_RDO G(S(KC_Z))
 #define USR_PST G(KC_V)
@@ -116,7 +116,7 @@ const uint16_t PROGMEM combo_l12[]       = {KC_W, HRM_S, COMBO_END};
 const uint16_t PROGMEM combo_l13[]       = {KC_E, HRM_D, COMBO_END};
 const uint16_t PROGMEM combo_l14[]       = {KC_R, HRM_F, COMBO_END};
 const uint16_t PROGMEM combo_l15[]       = {KC_T, KC_G, COMBO_END};
-const uint16_t PROGMEM combo_l21[]       = {HRM_A, MOUSE(KC_Z), COMBO_END};
+const uint16_t PROGMEM combo_l21[]       = {HRM_A, MO_Z, COMBO_END};
 const uint16_t PROGMEM combo_l22[]       = {HRM_S, KC_X, COMBO_END};
 const uint16_t PROGMEM combo_l23[]       = {HRM_D, KC_C, COMBO_END};
 const uint16_t PROGMEM combo_l24[]       = {HRM_F, KC_V, COMBO_END};
@@ -130,10 +130,10 @@ const uint16_t PROGMEM combo_r21[]       = {KC_H, KC_M, COMBO_END};
 const uint16_t PROGMEM combo_r22[]       = {HRM_J, KC_N, COMBO_END};
 const uint16_t PROGMEM combo_r23[]       = {HRM_K, KC_COMM, COMBO_END};
 const uint16_t PROGMEM combo_r24[]       = {HRM_L, KC_DOT, COMBO_END};
-const uint16_t PROGMEM combo_r25[]       = {HRM_QUOT, ADJUST(KC_SLSH), COMBO_END};
-const uint16_t PROGMEM combo_memarr[]    = {KC_H, KC_N, COMBO_END};         // Right bracket
-const uint16_t PROGMEM combo_arrfn[]     = {HRM_J, KC_M, COMBO_END};        // Right square bracket
-const uint16_t PROGMEM combo_fullarrfn[] = {HRM_A, MOUSE(KC_Z), COMBO_END}; // Right square bracket
+const uint16_t PROGMEM combo_r25[]       = {HRM_QUOT, ADJ_SLSH, COMBO_END};
+const uint16_t PROGMEM combo_memarr[]    = {KC_H, KC_N, COMBO_END};  // Right bracket
+const uint16_t PROGMEM combo_arrfn[]     = {HRM_J, KC_M, COMBO_END}; // Right square bracket
+const uint16_t PROGMEM combo_fullarrfn[] = {HRM_A, MO_Z, COMBO_END}; // Right square bracket
 
 // clang-format off
 enum combos {
@@ -220,7 +220,7 @@ combo_t key_combos[] = {
 #define LAYOUT_QWERTY                                                                            \
     KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,       KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    \
     HRM_A,   HRM_S,   HRM_D,   HRM_F,   KC_G,       KC_H,    HRM_J,   HRM_K,   HRM_L,   HRM_QUOT,\
-    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,       KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, \
+    MO_Z,    KC_X,    KC_C,    KC_V,    KC_B,       KC_N,    KC_M,    KC_COMM, KC_DOT,  ADJ_SLSH, \
                       ESC_MED, SPC_NAV, TAB_CODE,  BSP_NUM, ENT_FUN
 
 // Media.
@@ -299,24 +299,10 @@ combo_t key_combos[] = {
 
 
 // Layer wrappers
-#define _MOUSE_MOD(                                               \
-    L00, L01, L02, L03, L04, R05, R06, R07, R08, R09,             \
-    L10, L11, L12, L13, L14, R15, R16, R17, R18, R19,             \
-    L20, L21, L22, L23, L24, R25, R26, R27, R28, R29,             \
-    ...)                                                          \
-            L00,        L01,        L02,        L03,        L04,  \
-            R05,        R06,        R07,        R08,        R09,  \
-            L10,        L11,        L12,        L13,        L14,  \
-            R15,        R16,        R17,        R18,        R19,  \
-      MOUSE(L20),       L21,        L22,        L23,        L24,  \
-            R25,        R26,        R27,        R28, ADJUST(R29), \
-      __VA_ARGS__
-#define MOUSE_MOD(...) _MOUSE_MOD(__VA_ARGS__)
-
 #define LAYOUT_wrapper(...) LAYOUT(__VA_ARGS__)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-  [_BASE] = LAYOUT_wrapper(MOUSE_MOD(LAYOUT_QWERTY)),
+  [_BASE] = LAYOUT_wrapper(LAYOUT_QWERTY),
   [_MEDIA] = LAYOUT_wrapper(LAYOUT_MEDIA),
   [_NAV] = LAYOUT_wrapper(LAYOUT_NAV),
   [_CODE] = LAYOUT_wrapper(LAYOUT_CODE),
@@ -450,22 +436,6 @@ void tap_switcher(void) {
     }
 }
 
-layer_state_t layer_state_set_user(layer_state_t state) {
-    // dragscroll when on the _NAV layer
-    charybdis_set_pointer_dragscroll_enabled(layer_state_cmp(state, _NAV));
-
-    // other trackball modes
-    if (layer_state_cmp(state, _MEDIA)) {
-        track_mode = MEDIA;
-        // } else if (layer_state_cmp(state, _CODE)) {
-        //     track_mode = CARRET;
-    } else {
-        track_mode = CURSOR;
-    }
-
-    return state;
-}
-
 bool appswitch_active = false;
 bool tabswitch_active = false;
 
@@ -494,19 +464,29 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     // if thumb cluster keys are pressed, turn off the mouse layer
-    if (record->event.key.row % (MATRIX_ROWS / 2) >= 3 && record->event.pressed) {
 #ifdef POINTING_DEVICE_AUTO_MOUSE_ENABLE
+    if (record->event.key.row % (MATRIX_ROWS / 2) >= 3 && record->event.pressed) {
         layer_off(_MOUSE);
-#endif
     }
+#endif
 
     // custom keycodes
     switch (keycode) {
+        // set trackball modes...
+        case SPC_NAV:
+            charybdis_set_pointer_dragscroll_enabled(record->event.pressed);
+            return true;
+        case ESC_MED:
+            track_mode = record->event.pressed ? MEDIA : CURSOR;
+            return true;
+
         case OSM_HYPR:
         case OSM_MEH:
+#ifdef POINTING_DEVICE_AUTO_MOUSE_ENABLE
             if (record->event.pressed) {
                 layer_off(_MOUSE);
             }
+#endif
             return true;
         // Pause mouse report updates for short time after clicking to make it easier
         // to double click with small movement of trackball
@@ -570,12 +550,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return false;
 
         default:
-#ifndef POINTING_DEVICE_AUTO_MOUSE_ENABLE
-#    ifdef ACHORDION_ENABLE
+#if !defined(POINTING_DEVICE_AUTO_MOUSE_ENABLE) && defined(ACHORDION_ENABLE)
             return process_achordion(keycode, record);
-#    else
+#else
             return true;
-#    endif
 #endif
     }
 }
@@ -583,8 +561,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 /*
     ACHORDION config
 */
-#ifndef POINTING_DEVICE_AUTO_MOUSE_ENABLE
-#    ifdef ACHORDION_ENABLE
+#if !defined(POINTING_DEVICE_AUTO_MOUSE_ENABLE) && defined(ACHORDION_ENABLE)
 
 void matrix_scan_user(void) {
     achordion_task();
@@ -613,20 +590,14 @@ bool achordion_chord(uint16_t tap_hold_keycode, keyrecord_t *tap_hold_record, ui
 
 uint16_t achordion_timeout(uint16_t tap_hold_keycode) {
     switch (tap_hold_keycode) {
-        case ESC_MED:
-        case TAB_CODE:
-        case BSP_NUM:
-        case ENT_FUN:
-        case MOUSE(KC_Z):
-        case ADJUST(KC_SLSH):
-            return 0; // Bypass Achordion for these keys.
-
-        case SPC_NAV:
-            return 300;
+        case MO_Z:
+            return 150;
 
         default:
             return 800;
     }
+
+    return 800;
 }
 
 bool achordion_eager_mod(uint8_t mod) {
@@ -644,7 +615,6 @@ bool achordion_eager_mod(uint8_t mod) {
     }
 }
 
-#    endif
 #endif
 
 bool caps_word_press_user(uint16_t keycode) {
