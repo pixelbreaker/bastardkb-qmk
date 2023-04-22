@@ -26,6 +26,8 @@
 // qmk generate-autocorrect-data ./keyboards/bastardkb/charybdis/3x5/keymaps/pixelbreaker/autocorrect_dictionary.txt -kb bastardkb/charybdis/3x5/v2/splinky_3 -km pixelbreaker
 
 #include QMK_KEYBOARD_H
+#include "tracktap.h"
+#include "features/achordion.h"
 
 enum custom_layers { _BASE = 0, _MEDIA, _NAV, _MOUSE, _CODE, _NUM, _FUN, _ADJUST };
 enum custom_keycodes {
@@ -35,18 +37,6 @@ enum custom_keycodes {
     BI_ARRFN,
     SNIP_ARRFN,
 };
-
-// utils
-int max(int num1, int num2) {
-    return (num1 > num2) ? num1 : num2;
-}
-int min(int num1, int num2) {
-    return (num1 > num2) ? num2 : num1;
-}
-
-int8_t sign(int x) {
-    return (x > 0) - (x < 0);
-}
 
 // Automatically enable sniping when the mouse layer is on.
 // #define CHARYDIS_AUTO_SNIPING_ON_LAYER _MOUSE
@@ -115,15 +105,12 @@ int8_t sign(int x) {
 #define SNIPE SNIPING_MODE
 
 // combos
-const uint16_t PROGMEM combo_hypr[]   = {SPC_NAV, TAB_CODE, COMBO_END}; // HYPR One shot mod
-const uint16_t PROGMEM combo_meh[]    = {SPC_NAV, ESC_MED, COMBO_END};  // MEH One shot mod
-const uint16_t PROGMEM combo_delete[] = {BSP_NUM, ENT_FUN, COMBO_END};  // Shifted Num layer
-
-const uint16_t PROGMEM combo_capsword[] = {HRM_F, HRM_J, COMBO_END}; // Capsword
-
-const uint16_t PROGMEM combo_appswitch[] = {KC_C, KC_V, COMBO_END}; // Gui+tab application switcher with trackball
-const uint16_t PROGMEM combo_tabswitch[] = {KC_X, KC_C, COMBO_END}; // Ctrl+tab tab switcher
-
+const uint16_t PROGMEM combo_hypr[]      = {SPC_NAV, TAB_CODE, COMBO_END}; // HYPR One shot mod
+const uint16_t PROGMEM combo_meh[]       = {SPC_NAV, ESC_MED, COMBO_END};  // MEH One shot mod
+const uint16_t PROGMEM combo_delete[]    = {BSP_NUM, ENT_FUN, COMBO_END};  // Shifted Num layer
+const uint16_t PROGMEM combo_capsword[]  = {HRM_F, HRM_J, COMBO_END};      // Capsword
+const uint16_t PROGMEM combo_appswitch[] = {KC_C, KC_V, COMBO_END};        // Gui+tab application switcher with trackball
+const uint16_t PROGMEM combo_tabswitch[] = {KC_X, KC_C, COMBO_END};        // Ctrl+tab tab switcher
 const uint16_t PROGMEM combo_l11[]       = {KC_Q, HRM_A, COMBO_END};
 const uint16_t PROGMEM combo_l12[]       = {KC_W, HRM_S, COMBO_END};
 const uint16_t PROGMEM combo_l13[]       = {KC_E, HRM_D, COMBO_END};
@@ -144,9 +131,6 @@ const uint16_t PROGMEM combo_r22[]       = {HRM_J, KC_M, COMBO_END};
 const uint16_t PROGMEM combo_r23[]       = {HRM_K, KC_COMM, COMBO_END};
 const uint16_t PROGMEM combo_r24[]       = {HRM_L, KC_DOT, COMBO_END};
 const uint16_t PROGMEM combo_r25[]       = {HRM_QUOT, ADJ_SLSH, COMBO_END};
-const uint16_t PROGMEM combo_memarr[]    = {KC_H, KC_N, COMBO_END};  // ->
-const uint16_t PROGMEM combo_arrfn[]     = {HRM_J, KC_M, COMBO_END}; // =>
-const uint16_t PROGMEM combo_fullarrfn[] = {HRM_A, MO_Z, COMBO_END}; // () => {}
 
 // clang-format off
 enum combos {
@@ -192,8 +176,8 @@ combo_t key_combos[] = {
 
     [COMBO_L11]       = COMBO(combo_l11, KC_TILD),
     [COMBO_L12]       = COMBO(combo_l12, KC_LBRC),
-    [COMBO_L13]       = COMBO(combo_l13, KC_LPRN),
-    [COMBO_L14]       = COMBO(combo_l14, KC_LCBR),
+    [COMBO_L13]       = COMBO(combo_l13, KC_LCBR),
+    [COMBO_L14]       = COMBO(combo_l14, KC_LPRN),
     [COMBO_L15]       = COMBO(combo_l15, KC_LT),
     [COMBO_L21]       = COMBO(combo_l21, SNIP_ARRFN),
     [COMBO_L22]       = COMBO(combo_l22, KC_NO),
@@ -202,8 +186,8 @@ combo_t key_combos[] = {
     [COMBO_L25]       = COMBO(combo_l25, KC_BTN3),
 
     [COMBO_R11]       = COMBO(combo_r11, KC_GT),
-    [COMBO_R12]       = COMBO(combo_r12, KC_RCBR),
-    [COMBO_R13]       = COMBO(combo_r13, KC_RPRN),
+    [COMBO_R12]       = COMBO(combo_r12, KC_RPRN),
+    [COMBO_R13]       = COMBO(combo_r13, KC_RCBR),
     [COMBO_R14]       = COMBO(combo_r14, KC_RBRC),
     [COMBO_R15]       = COMBO(combo_r15, KC_GRV),
     [COMBO_R21]       = COMBO(combo_r21, BI_MEMARR), // ->
@@ -347,102 +331,8 @@ enum trackball_modes {
 };
 uint8_t track_mode = CURSOR;
 
-int16_t cum_x         = 0;
-int16_t cum_y         = 0;
-int16_t tap_factor    = 100;
-int16_t switch_factor = 250;
-
-bool     mouse_is_down           = false;
-uint16_t last_mouse_press        = 0;
-uint16_t last_media_nav          = 0;
-uint16_t switch_track_mode_timer = 0;
-
-void tap_code_fast(uint8_t code) {
-    register_code(code);
-    unregister_code(code);
-}
-
-void tap_tb(uint8_t keycode0, uint8_t keycode1, uint8_t keycode2, uint8_t keycode3) {
-    if (abs(cum_x) + abs(cum_y) >= tap_factor) {
-        if (abs(cum_x) * 0.4 > abs(cum_y)) {
-            for (int8_t i = 0; i <= (abs(cum_x) + abs(cum_y)) / tap_factor; i++) {
-                if (cum_x > 0) {
-                    tap_code_fast(keycode0);
-                    cum_x = max(cum_x - tap_factor, 0);
-                } else {
-                    tap_code_fast(keycode1);
-                    cum_x = min(cum_x + tap_factor, 0);
-                }
-            }
-            cum_y = 0;
-        } else {
-            for (int8_t i = 0; i <= (abs(cum_x) + abs(cum_y)) / tap_factor; i++) {
-                if (cum_y > 0) {
-                    tap_code_fast(keycode2);
-                    cum_y = max(cum_y - tap_factor, 0);
-                } else {
-                    tap_code_fast(keycode3);
-                    cum_y = min(cum_y + tap_factor, 0);
-                }
-            }
-            cum_x = 0;
-        }
-    }
-}
-
-void tap_media(void) {
-    if (abs(cum_x) + abs(cum_y) >= tap_factor) {
-        if (abs(cum_x) > abs(cum_y)) {
-            for (int8_t i = 0; i <= (abs(cum_x) + abs(cum_y)) / tap_factor; i++) {
-                if (cum_x > 0) {
-                    if (cum_x > MEDIA_TAP_THRESHOLD && timer_elapsed(last_media_nav) > MEDIA_TAP_TERM) {
-                        tap_code_fast(KC_MNXT);
-                        last_media_nav = timer_read();
-                    }
-                    cum_x = max(cum_x - tap_factor, 0);
-                } else {
-                    if (cum_x < -MEDIA_TAP_THRESHOLD && timer_elapsed(last_media_nav) > MEDIA_TAP_TERM) {
-                        tap_code_fast(KC_MPRV);
-                        last_media_nav = timer_read();
-                    }
-                    cum_x = max(cum_x + tap_factor, 0);
-                }
-            }
-            cum_y = 0;
-        } else {
-            for (int8_t i = 0; i <= (abs(cum_x) + abs(cum_y)) / tap_factor; i++) {
-                if (cum_y > 0) {
-                    tap_code_fast(KC_VOLU);
-                    cum_y = max(cum_y - tap_factor, 0);
-                } else {
-                    tap_code_fast(KC_VOLD);
-                    cum_y = min(cum_y + tap_factor, 0);
-                }
-            }
-            cum_x = 0;
-        }
-    }
-}
-
-void tap_switcher(void) {
-    if (abs(cum_x) + abs(cum_y) >= switch_factor) {
-        if (cum_x > 0) {
-            for (int8_t i = 0; i <= (abs(cum_x) + abs(cum_y)) / switch_factor; i++) {
-                tap_code_fast(KC_TAB);
-                cum_x = max(cum_x - switch_factor, 0);
-            }
-            cum_y = 0;
-        } else {
-            for (int8_t i = 0; i <= (abs(cum_x) + abs(cum_y)) / switch_factor; i++) {
-                register_code(KC_LSFT);
-                tap_code_fast(KC_TAB);
-                unregister_code(KC_LSFT);
-                cum_x = min(cum_x + switch_factor, 0);
-            }
-            cum_y = 0;
-        }
-    }
-}
+bool     mouse_is_down    = false;
+uint16_t last_mouse_press = 0; // for click tracking pause
 
 bool appswitch_active = false;
 bool tabswitch_active = false;
@@ -461,8 +351,7 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
 
     if (track_mode != CURSOR || appswitch_active || tabswitch_active || mouse_pause) {
         // Nerf mouse_report as we're doing something else
-        cum_x += mouse_report.x;
-        cum_y -= mouse_report.y;
+        tap_report(mouse_report);
         mouse_report.x = 0;
         mouse_report.y = 0;
     }

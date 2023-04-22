@@ -93,15 +93,6 @@
 /** Charybdis-specific features. */
 
 #ifdef POINTING_DEVICE_ENABLE
-// Automatically enable the pointer layer when moving the trackball.  See also:
-// - `CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_TIMEOUT_MS`
-// - `CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD`
-// #    define CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
-#    ifdef CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
-#        define CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_TIMEOUT_MS 800
-#        define CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD 8
-#    endif
-
 // Flip horizontal direction for drag-scroll.
 // #    define CHARYBDIS_DRAGSCROLL_REVERSE_X
 #    define CHARYBDIS_DRAGSCROLL_REVERSE_Y
