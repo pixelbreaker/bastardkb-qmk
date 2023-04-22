@@ -246,7 +246,7 @@ combo_t key_combos[] = {
 // Navigation.
 #define LAYOUT_NAV                                                                               \
     __________________RESET_L__________________,    CW_TOGG, _______, _______, _______, _______, \
-    ______________HOME_ROW_CAGS_L______________,    DEL_LINE,KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT, \
+    _______, _______, _______, _______, _______,    DEL_LINE,KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT, \
     ________________COPY_PASTA_________________,    KC_INS, KC_HOME, KC_PGDN,  KC_PGUP, KC_END,  \
                          U_NA,    U_NA,    U_NA,    KC_BSPC, KC_ENT
 
@@ -297,8 +297,8 @@ combo_t key_combos[] = {
 // Mouse (Manual)
     #define LAYOUT_MOUSE                                                                         \
     DPI_MOD, S_D_MOD, _______, _______, _______,    _______, _______, _______, _______, _______, \
+    ______________HOME_ROW_CAGS_L______________,    _______, _______, _______, _______, _______, \
     _______, SNIPE,   _______, _______, _______,    _______, _______, _______, _______, _______, \
-    _______, USR_CUT, USR_CPY, USR_PST, USR_RDO,    _______, _______, _______, _______, _______, \
                       ________MOUSE_BUTS_______,    _______, _______
 
 #endif
@@ -476,6 +476,14 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
     return mouse_report;
 }
 
+bool return_or_achordion(bool default_return, uint16_t keycode, keyrecord_t *record) {
+#if !defined(POINTING_DEVICE_AUTO_MOUSE_ENABLE) && defined(ACHORDION_ENABLE)
+    return process_achordion(keycode, record);
+#else
+    return default_return;
+#endif
+}
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     // if thumb cluster keys are pressed, turn off the mouse layer
 #ifdef POINTING_DEVICE_AUTO_MOUSE_ENABLE
@@ -489,10 +497,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         // set trackball modes...
         case SPC_NAV:
             charybdis_set_pointer_dragscroll_enabled(record->event.pressed);
-            return true;
+            return return_or_achordion(true, keycode, record);
         case ESC_MED:
             track_mode = record->event.pressed ? MEDIA : CURSOR;
-            return true;
+            return return_or_achordion(true, keycode, record);
         case TAB_CODE:
             if (record->event.pressed) {
                 if (!extend_deferred_exec(activate_carret_token, CARRET_TIMEOUT_MS)) {
@@ -502,7 +510,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 cancel_deferred_exec(activate_carret_token);
                 track_mode = CURSOR;
             }
-            return true;
+            return return_or_achordion(true, keycode, record);
 
         case OSM_HYPR:
         case OSM_MEH:
@@ -602,8 +610,7 @@ bool achordion_chord(uint16_t tap_hold_keycode, keyrecord_t *tap_hold_record, ui
             }
             break;
     }
-
-    // Also allow same-hand holds when the other key is in the rows below the
+    // Also allow same-hand hol ds when the other key is in the rows below the
     // alphas. I need the `% (MATRIX_ROWS / 2)` because my keyboard is split.
     // if (tap_hold_record->event.key.row % (MATRIX_ROWS / 2) >= 3 || other_record->event.key.row % (MATRIX_ROWS / 2) >= 3) {
     //     return true;
@@ -619,6 +626,7 @@ uint16_t achordion_timeout(uint16_t tap_hold_keycode) {
         case TAB_CODE:
         case BSP_NUM:
         case ENT_FUN:
+        case SPC_NAV:
             return 0;
 
         case MO_Z:
@@ -633,10 +641,10 @@ uint16_t achordion_timeout(uint16_t tap_hold_keycode) {
 
 bool achordion_eager_mod(uint8_t mod) {
     switch (mod) {
-        case MOD_LSFT:
-        case MOD_RSFT:
-        case MOD_LCTL:
-        case MOD_RCTL:
+        // case MOD_LSFT:
+        // case MOD_RSFT:
+        // case MOD_LCTL:
+        // case MOD_RCTL:
         case MOD_HYPR:
         case MOD_MEH:
             return true; // Eagerly apply Shift and Ctrl mods.
