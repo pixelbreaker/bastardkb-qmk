@@ -49,11 +49,23 @@ int8_t sign(int x) {
 }
 
 // Automatically enable sniping when the mouse layer is on.
-// #define CHARYDIS_AUTO_SNIPING_ON_LAYER _NAV
+// #define CHARYDIS_AUTO_SNIPING_ON_LAYER _MOUSE
+
 #ifdef CHARYBDIS_DRAGSCROLL_DPI
 #    undef CHARYBDIS_DRAGSCROLL_DPI
 #endif
 #define CHARYBDIS_DRAGSCROLL_DPI 40
+
+#ifndef MEDIA_TAP_TERM
+#    define MEDIA_TAP_TERM 500
+#endif
+#ifndef MEDIA_TAP_THRESHOLD
+#    define MEDIA_TAP_THRESHOLD 100
+#endif
+
+#ifndef CARRET_TIMEOUT_MS
+#    define CARRET_TIMEOUT_MS 250
+#endif
 
 #define ESC_MED LT(_MEDIA, KC_ESC)
 #define SPC_NAV LT(_NAV, KC_SPC)
@@ -196,8 +208,8 @@ combo_t key_combos[] = {
     [COMBO_R15]       = COMBO(combo_r15, KC_GRV),
     [COMBO_R21]       = COMBO(combo_r21, BI_MEMARR), // ->
     [COMBO_R22]       = COMBO(combo_r22, BI_ARRFN), // =>
-    [COMBO_R23]       = COMBO(combo_r23, A(KC_3)), // #
-    [COMBO_R24]       = COMBO(combo_r24, S(KC_2)), // @
+    [COMBO_R23]       = COMBO(combo_r23, GB_HASH), // #
+    [COMBO_R24]       = COMBO(combo_r24, GB_AT), // @
     [COMBO_R25]       = COMBO(combo_r25, KC_SCLN),
 };
 
@@ -222,7 +234,7 @@ combo_t key_combos[] = {
     KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,       KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    \
     HRM_A,   HRM_S,   HRM_D,   HRM_F,   KC_G,       KC_H,    HRM_J,   HRM_K,   HRM_L,   HRM_QUOT,\
     MO_Z,    KC_X,    KC_C,    KC_V,    KC_B,       KC_N,    KC_M,    KC_COMM, KC_DOT,  ADJ_SLSH, \
-                      ESC_MED, SPC_NAV, TAB_CODE,  BSP_NUM, ENT_FUN
+                      ESC_MED, SPC_NAV, TAB_CODE,   BSP_NUM, ENT_FUN
 
 // Media.
 #define LAYOUT_MEDIA                                                                             \
@@ -285,8 +297,8 @@ combo_t key_combos[] = {
 // Mouse (Manual)
     #define LAYOUT_MOUSE                                                                         \
     DPI_MOD, S_D_MOD, _______, _______, _______,    _______, _______, _______, _______, _______, \
-    _______, _______, _______, _______, _______,    _______, _______, _______, _______, _______, \
     _______, SNIPE,   _______, _______, _______,    _______, _______, _______, _______, _______, \
+    _______, USR_CUT, USR_CPY, USR_PST, USR_RDO,    _______, _______, _______, _______, _______, \
                       ________MOUSE_BUTS_______,    _______, _______
 
 #endif
@@ -353,33 +365,27 @@ void tap_code_fast(uint8_t code) {
 void tap_tb(uint8_t keycode0, uint8_t keycode1, uint8_t keycode2, uint8_t keycode3) {
     if (abs(cum_x) + abs(cum_y) >= tap_factor) {
         if (abs(cum_x) * 0.4 > abs(cum_y)) {
-            if (cum_x > 0) {
-                for (int8_t i = 0; i <= (abs(cum_x) + abs(cum_y)) / tap_factor; i++) {
+            for (int8_t i = 0; i <= (abs(cum_x) + abs(cum_y)) / tap_factor; i++) {
+                if (cum_x > 0) {
                     tap_code_fast(keycode0);
                     cum_x = max(cum_x - tap_factor, 0);
-                }
-                cum_y = 0;
-            } else {
-                for (int8_t i = 0; i <= (abs(cum_x) + abs(cum_y)) / tap_factor; i++) {
+                } else {
                     tap_code_fast(keycode1);
                     cum_x = min(cum_x + tap_factor, 0);
                 }
-                cum_y = 0;
             }
+            cum_y = 0;
         } else {
-            if (cum_y > 0) {
-                for (int8_t i = 0; i <= (abs(cum_x) + abs(cum_y)) / tap_factor; i++) {
+            for (int8_t i = 0; i <= (abs(cum_x) + abs(cum_y)) / tap_factor; i++) {
+                if (cum_y > 0) {
                     tap_code_fast(keycode2);
                     cum_y = max(cum_y - tap_factor, 0);
-                }
-                cum_x = 0;
-            } else {
-                for (int8_t i = 0; i <= (abs(cum_x) + abs(cum_y)) / tap_factor; i++) {
+                } else {
                     tap_code_fast(keycode3);
                     cum_y = min(cum_y + tap_factor, 0);
                 }
-                cum_x = 0;
             }
+            cum_x = 0;
         }
     }
 }
@@ -387,21 +393,22 @@ void tap_tb(uint8_t keycode0, uint8_t keycode1, uint8_t keycode2, uint8_t keycod
 void tap_media(void) {
     if (abs(cum_x) + abs(cum_y) >= tap_factor) {
         if (abs(cum_x) > abs(cum_y)) {
-            if (cum_x > 0) {
-                if (cum_x > 80 && timer_elapsed(last_media_nav) > 500) {
-                    tap_code_fast(KC_MNXT);
-                    last_media_nav = timer_read();
+            for (int8_t i = 0; i <= (abs(cum_x) + abs(cum_y)) / tap_factor; i++) {
+                if (cum_x > 0) {
+                    if (cum_x > MEDIA_TAP_THRESHOLD && timer_elapsed(last_media_nav) > MEDIA_TAP_TERM) {
+                        tap_code_fast(KC_MNXT);
+                        last_media_nav = timer_read();
+                    }
+                    cum_x = max(cum_x - tap_factor, 0);
+                } else {
+                    if (cum_x < -MEDIA_TAP_THRESHOLD && timer_elapsed(last_media_nav) > MEDIA_TAP_TERM) {
+                        tap_code_fast(KC_MPRV);
+                        last_media_nav = timer_read();
+                    }
+                    cum_x = max(cum_x + tap_factor, 0);
                 }
-                cum_x = max(cum_x - tap_factor, 0);
-                cum_y = 0;
-            } else {
-                if (cum_x < -80 && timer_elapsed(last_media_nav) > 500) {
-                    tap_code_fast(KC_MPRV);
-                    last_media_nav = timer_read();
-                }
-                cum_x = min(cum_x + tap_factor, 0);
-                cum_y = 0;
             }
+            cum_y = 0;
         } else {
             for (int8_t i = 0; i <= (abs(cum_x) + abs(cum_y)) / tap_factor; i++) {
                 if (cum_y > 0) {
@@ -439,6 +446,13 @@ void tap_switcher(void) {
 
 bool appswitch_active = false;
 bool tabswitch_active = false;
+
+static deferred_token activate_carret_token = INVALID_DEFERRED_TOKEN;
+
+uint32_t activate_carret_mode(uint32_t trigger_time, void *cb_arg) {
+    track_mode = CARRET;
+    return 0;
+}
 
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
     // Pause mouse report updates for short time after clicking to make it easier
@@ -478,6 +492,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return true;
         case ESC_MED:
             track_mode = record->event.pressed ? MEDIA : CURSOR;
+            return true;
+        case TAB_CODE:
+            if (record->event.pressed) {
+                if (!extend_deferred_exec(activate_carret_token, CARRET_TIMEOUT_MS)) {
+                    activate_carret_token = defer_exec(CARRET_TIMEOUT_MS, activate_carret_mode, NULL);
+                }
+            } else {
+                cancel_deferred_exec(activate_carret_token);
+                track_mode = CURSOR;
+            }
             return true;
 
         case OSM_HYPR:

@@ -18,6 +18,8 @@
 #pragma once
 
 #define ACHORDION_ENABLE
+#define MEDIA_TAP_THRESHOLD 85
+#define MEDIA_TAP_TERM 600
 
 #define COMBO_TERM 50
 #define USB_POLLING_INTERVAL_MS 1
