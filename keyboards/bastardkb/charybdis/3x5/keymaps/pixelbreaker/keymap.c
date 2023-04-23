@@ -76,6 +76,8 @@ enum custom_keycodes {
 #define USR_UND G(KC_Z)
 #define VOL_SML A(KC_LSFT)
 #define MACSLEEP RCS(KC_KB_POWER)
+#define MAC_SSHT G(S(KC_4))
+#define MAC_SRCD G(S(KC_5))
 
 // CAGS (Qwerty)
 #define HRM_A LCTL_T(KC_A)
@@ -90,6 +92,11 @@ enum custom_keycodes {
 
 #define GB_HASH A(KC_3)
 #define GB_AT S(KC_2)
+
+#define MV_DOWN A(KC_DOWN)
+#define MV_UP A(KC_UP)
+#define MV_FOR G(KC_RIGHT)
+#define MV_BAK G(KC_LEFT)
 
 #define MS_L KC_MS_LEFT
 #define MS_R KC_MS_RIGHT
@@ -229,7 +236,7 @@ combo_t key_combos[] = {
 
 // Navigation.
 #define LAYOUT_NAV                                                                               \
-    __________________RESET_L__________________,    CW_TOGG, _______, _______, _______, _______, \
+    _______, _______, MAC_SSHT,MAC_SRCD,_______,    CW_TOGG, MV_BAK,  MV_DOWN, MV_UP,   MV_FOR, \
     _______, _______, _______, _______, _______,    DEL_LINE,KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT, \
     ________________COPY_PASTA_________________,    KC_INS, KC_HOME, KC_PGDN,  KC_PGUP, KC_END,  \
                          U_NA,    U_NA,    U_NA,    KC_BSPC, KC_ENT
