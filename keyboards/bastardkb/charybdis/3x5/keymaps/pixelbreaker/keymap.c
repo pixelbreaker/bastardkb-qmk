@@ -492,11 +492,11 @@ bool achordion_chord(uint16_t tap_hold_keycode, keyrecord_t *tap_hold_record, ui
     // Exceptionally consider the following chords as holds, even though they
     // are on the same hand.
     switch (tap_hold_keycode) {
-        case HRM_A:
-            if (other_keycode == KC_C || other_keycode == KC_X) {
-                return true;
-            }
-            break;
+            // case HRM_A:
+            //     if (other_keycode == KC_C || other_keycode == KC_X) {
+            //         return true;
+            //     }
+            //     break;
 
         case HRM_D: // S + Tab.
             if (other_keycode == HRM_S || other_keycode == TAB_CODE) {
