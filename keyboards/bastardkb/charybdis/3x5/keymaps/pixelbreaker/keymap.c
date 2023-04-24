@@ -336,12 +336,12 @@ uint16_t last_mouse_press = 0; // for click tracking pause
 bool appswitch_active = false;
 bool tabswitch_active = false;
 
-static deferred_token activate_carret_token = INVALID_DEFERRED_TOKEN;
+// static deferred_token activate_carret_token = INVALID_DEFERRED_TOKEN;
 
-uint32_t activate_carret_mode(uint32_t trigger_time, void *cb_arg) {
-    track_mode = CARRET;
-    return 0;
-}
+// uint32_t activate_carret_mode(uint32_t trigger_time, void *cb_arg) {
+//     track_mode = CARRET;
+//     return 0;
+// }
 
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
     // Pause mouse report updates for short time after clicking to make it easier
@@ -389,16 +389,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case ESC_MED:
             track_mode = record->event.pressed ? MEDIA : CURSOR;
             return return_or_achordion(true, keycode, record);
-        case TAB_CODE:
-            if (record->event.pressed) {
-                if (!extend_deferred_exec(activate_carret_token, CARRET_TIMEOUT_MS)) {
-                    activate_carret_token = defer_exec(CARRET_TIMEOUT_MS, activate_carret_mode, NULL);
-                }
-            } else {
-                cancel_deferred_exec(activate_carret_token);
-                track_mode = CURSOR;
-            }
-            return return_or_achordion(true, keycode, record);
+            // case TAB_CODE:
+            //     if (record->event.pressed) {
+            //         if (!extend_deferred_exec(activate_carret_token, CARRET_TIMEOUT_MS)) {
+            //             activate_carret_token = defer_exec(CARRET_TIMEOUT_MS, activate_carret_mode, NULL);
+            //         }
+            //     } else {
+            //         cancel_deferred_exec(activate_carret_token);
+            //         track_mode = CURSOR;
+            //     }
+            //     return return_or_achordion(true, keycode, record);
 
         case OSM_HYPR:
         case OSM_MEH:
@@ -492,6 +492,12 @@ bool achordion_chord(uint16_t tap_hold_keycode, keyrecord_t *tap_hold_record, ui
     // Exceptionally consider the following chords as holds, even though they
     // are on the same hand.
     switch (tap_hold_keycode) {
+        case HRM_A:
+            if (other_keycode == KC_C || other_keycode == KC_X) {
+                return true;
+            }
+            break;
+
         case HRM_D: // S + Tab.
             if (other_keycode == HRM_S || other_keycode == TAB_CODE) {
                 return true;
@@ -524,7 +530,7 @@ uint16_t achordion_timeout(uint16_t tap_hold_keycode) {
 
         case SPC_NAV:
         case MO_Z:
-            return 150;
+            return 100;
 
         default:
             return 800;
@@ -586,10 +592,8 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
         // thumbs combos tend to be super slow
         case COMBO_HYPR:
         case COMBO_MEH:
-            return COMBO_TERM + 100;
-
         case COMBO_DELETE:
-            return COMBO_TERM + 50;
+            return COMBO_TERM + 100;
 
         // some combos are slooow
         case COMBO_L21:
