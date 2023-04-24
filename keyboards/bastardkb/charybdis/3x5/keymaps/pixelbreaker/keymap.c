@@ -422,180 +422,188 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
         case APPSWITCH:
             if (record->event.pressed) {
-                if (!appswitch_active) { tap_hold_keycode, keyrecord_t *tap_hold_record, uint16_t other_keycode, keyrecord_t *other_record) {
-                        // Exceptionally consider the following chords as holds, even though they
-                        // are on the same hand.
-                        switch (tap_hold_keycode) {
-                            case HRM_D: // D + S.
-                                if (other_keycode == HRM_S) {
-                                    return true;
-                                }
-                                break;
-                        }
-                        // Also allow same-hand hol ds when the other key is in the rows below the
-                        // alphas. I need the `% (MATRIX_ROWS / 2)` because my keyboard is split.
-                        // if (tap_hold_record->event.ke
-                        register_code(KC_LGUI);
-                        register_code(KC_TAB);
-                        unregister_code(KC_TAB);
-                    }
-                } else {
-                    if (appswitch_active) {
-                        unregister_code(KC_LGUI);
-                    }
+                if (!appswitch_active) {
+                    register_code(KC_LGUI);
+                    register_code(KC_TAB);
+                    unregister_code(KC_TAB);
                 }
-                appswitch_active = record->event.pressed;
-                return false;
-
-                case TABSWITCH:
-                    if (record->event.pressed) {
-                        if (!tabswitch_active) {
-                            register_code(KC_LCTL);
-                        }
-                    } else {
-                        if (tabswitch_active) {
-                            unregister_code(KC_LCTL);
-                        }
-                    }
-                    tabswitch_active = record->event.pressed;
-                    return false;
-
-                // COMPLEX combos
-                case BI_MEMARR: // ->
-                    if (record->event.pressed) {
-                        tap_code16(KC_MINS);
-                        tap_code16(KC_GT);
-                    }
-                    return false;
-
-                case BI_ARRFN: // =>
-                    if (record->event.pressed) {
-                        tap_code16(KC_EQL);
-                        tap_code16(KC_GT);
-                    }
-                    return false;
-
-                case SNIP_ARRFN: // Full arrow function
-                    if (record->event.pressed) {
-                        SEND_STRING("() =>\n{\n\n}");
-                        tap_code16(KC_UP);
-                    }
-                    return false;
-
-                default:
-#if !defined(POINTING_DEVICE_AUTO_MOUSE_ENABLE) && defined(ACHORDION_ENABLE)
-                    return process_achordion(keycode, record);
-#else
-                    return true;
-#endif
+            } else {
+                if (appswitch_active) {
+                    unregister_code(KC_LGUI);
+                }
             }
+            appswitch_active = record->event.pressed;
+            return false;
+
+        case TABSWITCH:
+            if (record->event.pressed) {
+                if (!tabswitch_active) {
+                    register_code(KC_LCTL);
+                }
+            } else {
+                if (tabswitch_active) {
+                    unregister_code(KC_LCTL);
+                }
+            }
+            tabswitch_active = record->event.pressed;
+            return false;
+
+        // COMPLEX combos
+        case BI_MEMARR: // ->
+            if (record->event.pressed) {
+                tap_code16(KC_MINS);
+                tap_code16(KC_GT);
+            }
+            return false;
+
+        case BI_ARRFN: // =>
+            if (record->event.pressed) {
+                tap_code16(KC_EQL);
+                tap_code16(KC_GT);
+            }
+            return false;
+
+        case SNIP_ARRFN: // Full arrow function
+            if (record->event.pressed) {
+                SEND_STRING("() =>\n{\n\n}");
+                tap_code16(KC_UP);
+            }
+            return false;
+
+        default:
+#if !defined(POINTING_DEVICE_AUTO_MOUSE_ENABLE) && defined(ACHORDION_ENABLE)
+            return process_achordion(keycode, record);
+#else
+            return true;
+#endif
     }
+}
 
 /*
     ACHORDION config
 */
 #if !defined(POINTING_DEVICE_AUTO_MOUSE_ENABLE) && defined(ACHORDION_ENABLE)
 
-    void matrix_scan_user(void) {
-        achordion_task();
+void matrix_scan_user(void) {
+    achordion_task();
+}
+
+bool achordion_chord(uint16_t tap_hold_keycode, keyrecord_t *tap_hold_record, uint16_t other_keycode, keyrecord_t *other_record) {
+    // Exceptionally consider the following chords as holds, even though they
+    // are on the same hand.
+    switch (tap_hold_keycode) {
+        case HRM_D: // S + Tab.
+            if (other_keycode == HRM_S || other_keycode == TAB_CODE) {
+                return true;
+            }
+            break;
+
+        case HRM_S: // Tab.
+            if (other_keycode == TAB_CODE) {
+                return true;
+            }
+            break;
+    }
+    // Also allow same-hand hol ds when the other key is in the rows below the
+    // alphas. I need the `% (MATRIX_ROWS / 2)` because my keyboard is split.
+    // if (tap_hold_record->event.key.row % (MATRIX_ROWS / 2) >= 3 || other_record->event.key.row % (MATRIX_ROWS / 2) >= 3) {
+    //     return true;
+    // }
+
+    // Otherwise, follow the opposite hands rule.
+    return achordion_opposite_hands(tap_hold_record, other_record);
+}
+
+uint16_t achordion_timeout(uint16_t tap_hold_keycode) {
+    switch (tap_hold_keycode) {
+        case ESC_MED:
+        case TAB_CODE:
+        case BSP_NUM:
+        case ENT_FUN:
+            return 0;
+
+        case SPC_NAV:
+        case MO_Z:
+            return 150;
+
+        default:
+            return 800;
     }
 
-    bool achordion_chord(uint16_ty.row % (MATRIX_ROWS / 2) >= 3 || other_record->event.key.row % (MATRIX_ROWS / 2) >= 3) {
-        //     return true;
-        // }
+    return 800;
+}
 
-        // Otherwise, follow the opposite hands rule.
-        return achordion_opposite_hands(tap_hold_record, other_record);
+bool achordion_eager_mod(uint8_t mod) {
+    switch (mod) {
+        // case MOD_LSFT:
+        // case MOD_RSFT:
+        // case MOD_LCTL:
+        // case MOD_RCTL:
+        case MOD_HYPR:
+        case MOD_MEH:
+            return true;
+
+        default:
+            return false;
     }
-
-    uint16_t achordion_timeout(uint16_t tap_hold_keycode) {
-        switch (tap_hold_keycode) {
-            case ESC_MED:
-            case TAB_CODE:
-            case BSP_NUM:
-            case ENT_FUN:
-                return 0;
-
-            case SPC_NAV:
-            case MO_Z:
-                return 150;
-
-            default:
-                return 800;
-        }
-    }
-
-    bool achordion_eager_mod(uint8_t mod) {
-        switch (mod) {
-            // case MOD_LSFT:
-            // case MOD_RSFT:
-            // case MOD_LCTL:
-            // case MOD_RCTL:
-            case MOD_HYPR:
-            case MOD_MEH:
-                return true; // Eagerly apply Shift and Ctrl mods.
-
-            default:
-                return false;
-        }
-    }
+}
 
 #endif
 
-    bool caps_word_press_user(uint16_t keycode) {
-        switch (keycode) {
-            // Keycodes that continue Caps Word, with shift applied.
-            case KC_A ... KC_Z:
-                add_weak_mods(MOD_BIT(KC_LSFT)); // Apply shift to next key.
-                return true;
+bool caps_word_press_user(uint16_t keycode) {
+    switch (keycode) {
+        // Keycodes that continue Caps Word, with shift applied.
+        case KC_A ... KC_Z:
+            add_weak_mods(MOD_BIT(KC_LSFT)); // Apply shift to next key.
+            return true;
 
-            // Keycodes that continue Caps Word, without shifting.
-            case KC_1 ... KC_0:
-            case KC_MINS:
-            case KC_UNDS:
-            case KC_BSPC:
-            case KC_DEL:
-                return true;
+        // Keycodes that continue Caps Word, without shifting.
+        case KC_1 ... KC_0:
+        case KC_MINS:
+        case KC_UNDS:
+        case KC_BSPC:
+        case KC_DEL:
+            return true;
 
-            default:
-                return false; // Deactivate Caps Word.
-        }
+        default:
+            return false; // Deactivate Caps Word.
+    }
+}
+
+// Combos
+bool get_combo_must_hold(uint16_t index, combo_t *combo) {
+    switch (index) {
+        case COMBO_APPSWITCH:
+        case COMBO_TABSWITCH:
+            return true;
     }
 
-    // Combos
-    bool get_combo_must_hold(uint16_t index, combo_t * combo) {
-        switch (index) {
-            case COMBO_APPSWITCH:
-            case COMBO_TABSWITCH:
-                return true;
-        }
+    return false;
+}
 
-        return false;
+uint16_t get_combo_term(uint16_t index, combo_t *combo) {
+    switch (index) {
+        // thumbs combos tend to be super slow
+        case COMBO_HYPR:
+        case COMBO_MEH:
+            return COMBO_TERM + 100;
+
+        case COMBO_DELETE:
+            return COMBO_TERM + 50;
+
+        // some combos are slooow
+        case COMBO_L21:
+        case COMBO_L23:
+        case COMBO_L24:
+        case COMBO_L25:
+        case COMBO_R25:
+            return COMBO_TERM + 40;
     }
 
-    uint16_t get_combo_term(uint16_t index, combo_t * combo) {
-        switch (index) {
-            // thumbs combos tend to be super slow
-            case COMBO_HYPR:
-            case COMBO_MEH:
-                return COMBO_TERM + 100;
+    return COMBO_TERM;
+}
 
-            case COMBO_DELETE:
-                return COMBO_TERM + 50;
-
-            // some combos are slooow
-            case COMBO_L21:
-            case COMBO_L23:
-            case COMBO_L24:
-            case COMBO_L25:
-            case COMBO_R25:
-                return COMBO_TERM + 40;
-        }
-
-        return COMBO_TERM;
-    }
-
-    // reset CPI after wake
-    void suspend_wakeup_init_user(void) {
-        keyboard_post_init_kb();
-    }
+// reset CPI after wake
+void suspend_wakeup_init_user(void) {
+    keyboard_post_init_kb();
+}
