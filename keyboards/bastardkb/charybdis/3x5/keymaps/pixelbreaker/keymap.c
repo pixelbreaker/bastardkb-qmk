@@ -594,6 +594,7 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
         case COMBO_L23:
         case COMBO_L24:
         case COMBO_L25:
+        case COMBO_R15:
         case COMBO_R25:
             return COMBO_TERM + 40;
     }
@@ -605,7 +606,7 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case SPC_NAV:
-            return TAPPING_TERM + 500;
+            return TAPPING_TERM + 80;
         default:
             return TAPPING_TERM;
     }
