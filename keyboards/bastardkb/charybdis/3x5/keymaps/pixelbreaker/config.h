@@ -43,6 +43,7 @@
 #ifndef TAPPING_TERM
 #    define TAPPING_TERM 180
 #endif // TAPPING_TERM
+#define TAPPING_TERM_PER_KEY
 
 /**
  * Enable rapid switch from tap to hold.  Disable auto-repeat when pressing key

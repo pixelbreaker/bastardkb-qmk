@@ -293,7 +293,6 @@ combo_t key_combos[] = {
     _______, _______, _______, _______, _______,    _______, _______, _______, _______, _______, \
                       _______, _______, _______,    _______, _______
 
-
 // Layer wrappers
 #define LAYOUT_wrapper(...) LAYOUT(__VA_ARGS__)
 
@@ -307,6 +306,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [_ADJUST] = LAYOUT_wrapper(LAYOUT_ADJUST),
   [_MOUSE]  = LAYOUT_wrapper(LAYOUT_MOUSE),
 };
+
 // clang-format on
 
 #if defined(POINTING_DEVICE_ENABLE) && defined(CHARYBDIS_AUTO_SNIPING_ON_LAYER)
@@ -505,16 +505,12 @@ bool achordion_chord(uint16_t tap_hold_keycode, keyrecord_t *tap_hold_record, ui
             break;
 
         case HRM_S: // Tab.
+        case HRM_F: // Tab.
             if (other_keycode == TAB_CODE) {
                 return true;
             }
             break;
     }
-    // Also allow same-hand hol ds when the other key is in the rows below the
-    // alphas. I need the `% (MATRIX_ROWS / 2)` because my keyboard is split.
-    // if (tap_hold_record->event.key.row % (MATRIX_ROWS / 2) >= 3 || other_record->event.key.row % (MATRIX_ROWS / 2) >= 3) {
-    //     return true;
-    // }
 
     // Otherwise, follow the opposite hands rule.
     return achordion_opposite_hands(tap_hold_record, other_record);
@@ -526,11 +522,9 @@ uint16_t achordion_timeout(uint16_t tap_hold_keycode) {
         case TAB_CODE:
         case BSP_NUM:
         case ENT_FUN:
-            return 0;
-
         case SPC_NAV:
         case MO_Z:
-            return 100;
+            return 0;
 
         default:
             return 800;
@@ -605,6 +599,16 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
     }
 
     return COMBO_TERM;
+}
+
+// Tapping terms
+uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case SPC_NAV:
+            return TAPPING_TERM + 500;
+        default:
+            return TAPPING_TERM;
+    }
 }
 
 // reset CPI after wake
