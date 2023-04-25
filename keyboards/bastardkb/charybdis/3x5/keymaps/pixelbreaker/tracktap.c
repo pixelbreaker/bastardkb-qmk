@@ -3,7 +3,7 @@
 // trackball mode
 int16_t cum_x         = 0;
 int16_t cum_y         = 0;
-int16_t tap_factor    = 100;
+int16_t tap_factor    = 150;
 int16_t switch_factor = 250;
 
 uint16_t last_media_nav = 0; // debounce media next/previous tracks

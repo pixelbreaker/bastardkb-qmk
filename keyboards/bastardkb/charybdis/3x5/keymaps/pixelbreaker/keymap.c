@@ -118,91 +118,70 @@ const uint16_t PROGMEM combo_delete[]    = {BSP_NUM, ENT_FUN, COMBO_END};  // Sh
 const uint16_t PROGMEM combo_capsword[]  = {HRM_F, HRM_J, COMBO_END};      // Capsword
 const uint16_t PROGMEM combo_appswitch[] = {KC_C, KC_V, COMBO_END};        // Gui+tab application switcher with trackball
 const uint16_t PROGMEM combo_tabswitch[] = {KC_X, KC_C, COMBO_END};        // Ctrl+tab tab switcher
-const uint16_t PROGMEM combo_l11[]       = {KC_Q, HRM_A, COMBO_END};
-const uint16_t PROGMEM combo_l12[]       = {KC_W, HRM_S, COMBO_END};
-const uint16_t PROGMEM combo_l13[]       = {KC_E, HRM_D, COMBO_END};
-const uint16_t PROGMEM combo_l14[]       = {KC_R, HRM_F, COMBO_END};
-const uint16_t PROGMEM combo_l15[]       = {KC_T, KC_G, COMBO_END};
-const uint16_t PROGMEM combo_l21[]       = {HRM_A, MO_Z, COMBO_END};
-const uint16_t PROGMEM combo_l22[]       = {HRM_S, KC_X, COMBO_END};
-const uint16_t PROGMEM combo_l23[]       = {HRM_D, KC_C, COMBO_END};
-const uint16_t PROGMEM combo_l24[]       = {HRM_F, KC_V, COMBO_END};
-const uint16_t PROGMEM combo_l25[]       = {KC_G, KC_B, COMBO_END};
-const uint16_t PROGMEM combo_r11[]       = {KC_Y, KC_H, COMBO_END};
-const uint16_t PROGMEM combo_r12[]       = {KC_U, HRM_J, COMBO_END};
-const uint16_t PROGMEM combo_r13[]       = {KC_I, HRM_K, COMBO_END};
-const uint16_t PROGMEM combo_r14[]       = {KC_O, HRM_L, COMBO_END};
-const uint16_t PROGMEM combo_r15[]       = {KC_P, HRM_QUOT, COMBO_END};
-const uint16_t PROGMEM combo_r21[]       = {KC_H, KC_N, COMBO_END};
-const uint16_t PROGMEM combo_r22[]       = {HRM_J, KC_M, COMBO_END};
-const uint16_t PROGMEM combo_r23[]       = {HRM_K, KC_COMM, COMBO_END};
-const uint16_t PROGMEM combo_r24[]       = {HRM_L, KC_DOT, COMBO_END};
-const uint16_t PROGMEM combo_r25[]       = {HRM_QUOT, ADJ_SLSH, COMBO_END};
+const uint16_t PROGMEM combo_vl11[]      = {KC_Q, HRM_A, COMBO_END};
+const uint16_t PROGMEM combo_vl12[]      = {KC_W, HRM_S, COMBO_END};
+const uint16_t PROGMEM combo_vl13[]      = {KC_E, HRM_D, COMBO_END};
+const uint16_t PROGMEM combo_vl14[]      = {KC_R, HRM_F, COMBO_END};
+const uint16_t PROGMEM combo_vl15[]      = {KC_T, KC_G, COMBO_END};
+const uint16_t PROGMEM combo_vl21[]      = {HRM_A, MO_Z, COMBO_END};
+const uint16_t PROGMEM combo_vl22[]      = {HRM_S, KC_X, COMBO_END};
+const uint16_t PROGMEM combo_vl23[]      = {HRM_D, KC_C, COMBO_END};
+const uint16_t PROGMEM combo_vl24[]      = {HRM_F, KC_V, COMBO_END};
+const uint16_t PROGMEM combo_vl25[]      = {KC_G, KC_B, COMBO_END};
+const uint16_t PROGMEM combo_vr11[]      = {KC_Y, KC_H, COMBO_END};
+const uint16_t PROGMEM combo_vr12[]      = {KC_U, HRM_J, COMBO_END};
+const uint16_t PROGMEM combo_vr13[]      = {KC_I, HRM_K, COMBO_END};
+const uint16_t PROGMEM combo_vr14[]      = {KC_O, HRM_L, COMBO_END};
+const uint16_t PROGMEM combo_vr15[]      = {KC_P, HRM_QUOT, COMBO_END};
+const uint16_t PROGMEM combo_vr21[]      = {KC_H, KC_N, COMBO_END};
+const uint16_t PROGMEM combo_vr22[]      = {HRM_J, KC_M, COMBO_END};
+const uint16_t PROGMEM combo_vr23[]      = {HRM_K, KC_COMM, COMBO_END};
+const uint16_t PROGMEM combo_vr24[]      = {HRM_L, KC_DOT, COMBO_END};
+const uint16_t PROGMEM combo_vr25[]      = {HRM_QUOT, ADJ_SLSH, COMBO_END};
+const uint16_t PROGMEM combo_hr14[]      = {KC_O, KC_P, COMBO_END};
+const uint16_t PROGMEM combo_hr24[]      = {HRM_L, HRM_QUOT, COMBO_END};
+const uint16_t PROGMEM combo_hr34[]      = {KC_DOT, ADJ_SLSH, COMBO_END};
 
-// clang-format off
-enum combos {
-    COMBO_HYPR,
-    COMBO_MEH,
-    COMBO_DELETE,
-    COMBO_APPSWITCH,
-    COMBO_TABSWITCH,
-    COMBO_CAPSWORD,
-    COMBO_L11,
-    COMBO_L12,
-    COMBO_L13,
-    COMBO_L14,
-    COMBO_L15,
-    COMBO_L21,
-    COMBO_L22,
-    COMBO_L23,
-    COMBO_L24,
-    COMBO_L25,
-    COMBO_R11,
-    COMBO_R12,
-    COMBO_R13,
-    COMBO_R14,
-    COMBO_R15,
-    COMBO_R21,
-    COMBO_R22,
-    COMBO_R23,
-    COMBO_R24,
-    COMBO_R25,
-    COMBO_LENGTH
-};
+enum combos { COMBO_HYPR, COMBO_MEH, COMBO_DELETE, COMBO_APPSWITCH, COMBO_TABSWITCH, COMBO_CAPSWORD, COMBO_VL11, COMBO_VL12, COMBO_VL13, COMBO_VL14, COMBO_VL15, COMBO_VL21, COMBO_VL22, COMBO_VL23, COMBO_VL24, COMBO_VL25, COMBO_VR11, COMBO_VR12, COMBO_VR13, COMBO_VR14, COMBO_VR15, COMBO_VR21, COMBO_VR22, COMBO_VR23, COMBO_VR24, COMBO_VR25, COMBO_HR14, COMBO_HR24, COMBO_HR34, COMBO_LENGTH };
 
 uint16_t COMBO_LEN = COMBO_LENGTH;
 
 combo_t key_combos[] = {
-    [COMBO_HYPR]        = COMBO(combo_hypr, OSM_HYPR),
-    [COMBO_MEH]         = COMBO(combo_meh, OSM_MEH),
-    [COMBO_DELETE]      = COMBO(combo_delete, KC_DEL),
+    [COMBO_HYPR]   = COMBO(combo_hypr, OSM_HYPR),
+    [COMBO_MEH]    = COMBO(combo_meh, OSM_MEH),
+    [COMBO_DELETE] = COMBO(combo_delete, KC_DEL),
 
-    [COMBO_APPSWITCH]   = COMBO(combo_appswitch, APPSWITCH),
-    [COMBO_TABSWITCH]   = COMBO(combo_tabswitch, TABSWITCH),
-    [COMBO_CAPSWORD]    = COMBO(combo_capsword, CW_TOGG),
+    [COMBO_APPSWITCH] = COMBO(combo_appswitch, APPSWITCH),
+    [COMBO_TABSWITCH] = COMBO(combo_tabswitch, TABSWITCH),
+    [COMBO_CAPSWORD]  = COMBO(combo_capsword, CW_TOGG),
 
-    [COMBO_L11]       = COMBO(combo_l11, KC_TILD),
-    [COMBO_L12]       = COMBO(combo_l12, KC_LBRC),
-    [COMBO_L13]       = COMBO(combo_l13, KC_LCBR),
-    [COMBO_L14]       = COMBO(combo_l14, KC_LPRN),
-    [COMBO_L15]       = COMBO(combo_l15, KC_LT),
-    [COMBO_L21]       = COMBO(combo_l21, SNIP_ARRFN),
-    [COMBO_L22]       = COMBO(combo_l22, KC_NO),
-    [COMBO_L23]       = COMBO(combo_l23, KC_BTN2),
-    [COMBO_L24]       = COMBO(combo_l24, KC_BTN1),
-    [COMBO_L25]       = COMBO(combo_l25, KC_BTN3),
+    [COMBO_VL11] = COMBO(combo_vl11, KC_TILD),
+    [COMBO_VL12] = COMBO(combo_vl12, KC_LBRC),
+    [COMBO_VL13] = COMBO(combo_vl13, KC_LCBR),
+    [COMBO_VL14] = COMBO(combo_vl14, KC_LPRN),
+    [COMBO_VL15] = COMBO(combo_vl15, KC_LT),
+    [COMBO_VL21] = COMBO(combo_vl21, SNIP_ARRFN),
+    [COMBO_VL22] = COMBO(combo_vl22, KC_NO),
+    [COMBO_VL23] = COMBO(combo_vl23, KC_BTN2),
+    [COMBO_VL24] = COMBO(combo_vl24, KC_BTN1),
+    [COMBO_VL25] = COMBO(combo_vl25, KC_BTN3),
 
-    [COMBO_R11]       = COMBO(combo_r11, KC_GT),
-    [COMBO_R12]       = COMBO(combo_r12, KC_RPRN),
-    [COMBO_R13]       = COMBO(combo_r13, KC_RCBR),
-    [COMBO_R14]       = COMBO(combo_r14, KC_RBRC),
-    [COMBO_R15]       = COMBO(combo_r15, KC_GRV),
-    [COMBO_R21]       = COMBO(combo_r21, BI_MEMARR), // ->
-    [COMBO_R22]       = COMBO(combo_r22, BI_ARRFN), // =>
-    [COMBO_R23]       = COMBO(combo_r23, GB_HASH), // #
-    [COMBO_R24]       = COMBO(combo_r24, GB_AT), // @
-    [COMBO_R25]       = COMBO(combo_r25, KC_SCLN),
+    [COMBO_VR11] = COMBO(combo_vr11, KC_GT),
+    [COMBO_VR12] = COMBO(combo_vr12, KC_RPRN),
+    [COMBO_VR13] = COMBO(combo_vr13, KC_RCBR),
+    [COMBO_VR14] = COMBO(combo_vr14, KC_RBRC),
+    [COMBO_VR15] = COMBO(combo_vr15, KC_GRV),
+    [COMBO_VR21] = COMBO(combo_vr21, BI_MEMARR), // ->
+    [COMBO_VR22] = COMBO(combo_vr22, BI_ARRFN),  // =>
+    [COMBO_VR23] = COMBO(combo_vr23, GB_HASH),   // #
+    [COMBO_VR24] = COMBO(combo_vr24, GB_AT),     // @
+    [COMBO_VR25] = COMBO(combo_vr25, KC_SCLN),
+    [COMBO_HR14] = COMBO(combo_hr14, KC_GRV),
+    [COMBO_HR24] = COMBO(combo_hr24, KC_SCLN),
+    [COMBO_HR34] = COMBO(combo_hr34, KC_COLN),
 };
+
+// clang-format off
 
 /** Convenience key shorthands. */
 #define U_NA KC_NO // Present but not available for use.
@@ -590,12 +569,12 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
             return COMBO_TERM + 100;
 
         // some combos are slooow
-        case COMBO_L21:
-        case COMBO_L23:
-        case COMBO_L24:
-        case COMBO_L25:
-        case COMBO_R15:
-        case COMBO_R25:
+        case COMBO_VL21:
+        case COMBO_VL23:
+        case COMBO_VL24:
+        case COMBO_VL25:
+        case COMBO_VR15:
+        case COMBO_VR25:
             return COMBO_TERM + 40;
     }
 
