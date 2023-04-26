@@ -54,7 +54,7 @@ enum custom_keycodes {
 #endif
 
 #ifndef CARRET_TIMEOUT_MS
-#    define CARRET_TIMEOUT_MS 250
+#    define CARRET_TIMEOUT_MS 350
 #endif
 
 #define ESC_MED LT(_MEDIA, KC_ESC)
@@ -114,7 +114,7 @@ enum custom_keycodes {
 // combos
 const uint16_t PROGMEM combo_hypr[]      = {SPC_NAV, TAB_CODE, COMBO_END}; // HYPR One shot mod
 const uint16_t PROGMEM combo_meh[]       = {SPC_NAV, ESC_MED, COMBO_END};  // MEH One shot mod
-const uint16_t PROGMEM combo_delete[]    = {BSP_NUM, ENT_FUN, COMBO_END};  // Shifted Num layer
+const uint16_t PROGMEM combo_delete[]    = {BSP_NUM, ENT_FUN, COMBO_END};  // Delete
 const uint16_t PROGMEM combo_capsword[]  = {HRM_F, HRM_J, COMBO_END};      // Capsword
 const uint16_t PROGMEM combo_appswitch[] = {KC_C, KC_V, COMBO_END};        // Gui+tab application switcher with trackball
 const uint16_t PROGMEM combo_tabswitch[] = {KC_X, KC_C, COMBO_END};        // Ctrl+tab tab switcher
@@ -315,12 +315,13 @@ uint16_t last_mouse_press = 0; // for click tracking pause
 bool appswitch_active = false;
 bool tabswitch_active = false;
 
-// static deferred_token activate_carret_token = INVALID_DEFERRED_TOKEN;
+// carret layer delay timers
+static deferred_token activate_carret_token = INVALID_DEFERRED_TOKEN;
 
-// uint32_t activate_carret_mode(uint32_t trigger_time, void *cb_arg) {
-//     track_mode = CARRET;
-//     return 0;
-// }
+uint32_t activate_carret_mode(uint32_t trigger_time, void *cb_arg) {
+    track_mode = CARRET;
+    return 0;
+}
 
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
     // Pause mouse report updates for short time after clicking to make it easier
@@ -368,16 +369,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case ESC_MED:
             track_mode = record->event.pressed ? MEDIA : CURSOR;
             return return_or_achordion(true, keycode, record);
-            // case TAB_CODE:
-            //     if (record->event.pressed) {
-            //         if (!extend_deferred_exec(activate_carret_token, CARRET_TIMEOUT_MS)) {
-            //             activate_carret_token = defer_exec(CARRET_TIMEOUT_MS, activate_carret_mode, NULL);
-            //         }
-            //     } else {
-            //         cancel_deferred_exec(activate_carret_token);
-            //         track_mode = CURSOR;
-            //     }
-            //     return return_or_achordion(true, keycode, record);
+        case TAB_CODE:
+            if (record->event.pressed) {
+                if (!extend_deferred_exec(activate_carret_token, CARRET_TIMEOUT_MS)) {
+                    activate_carret_token = defer_exec(CARRET_TIMEOUT_MS, activate_carret_mode, NULL);
+                }
+            } else {
+                cancel_deferred_exec(activate_carret_token);
+                track_mode = CURSOR;
+            }
+            return return_or_achordion(true, keycode, record);
 
         case OSM_HYPR:
         case OSM_MEH:
